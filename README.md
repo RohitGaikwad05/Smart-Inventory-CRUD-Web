@@ -1,192 +1,95 @@
-# AI Smart Inventory - AI-Powered Inventory Management System
-**  Live Project Link:  https://smart-inventory-ai.vercel.app/**
+# 📦 Kognio: AI Smart Inventory System
+> **Intelligence in Motion. Logistics Reimagined.**
 
-A full-stack MERN application with voice command capabilities for managing inventory using natural language processing.
+Kognio is a high-fidelity, full-stack Smart Inventory Management system that bridges the gap between traditional CRUD operations and **Natural Language Intelligence**. Built for modern operations, it allows users to manage complex inventory flows using simple voice and text commands.
 
-![Status](https://img.shields.io/badge/status-active-success.svg)
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Status](https://img.shields.io/badge/Status-Production--Ready-success.svg?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-1.0.0-blue.svg?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-purple.svg?style=for-the-badge)
 
-## ✨ Features
+---
 
-- 🔐 User Authentication (JWT)
-- 📦 Product Management (CRUD)
-- 📊 Real-time Dashboard with Analytics
-- 🎤 Voice Commands (Speech Recognition + NLP)
-- 📈 Stock Management (Add/Remove/Adjust)
-- 🔔 Low Stock Alerts
-- 📋 Transaction History
-- 📊 Reports & Analytics
-- 🤖 AI-Powered Command Processing (Groq AI)
+## ✨ Core Innovations
 
-## 🛠️ Tech Stack
+### 🎤 NLP & Voice Command Engine
+Stop clicking, start talking. Kognio features a custom-built **Natural Language Processing (NLP)** layer that interprets conversational English into database actions.
+*   *"Add 50 laptops to stock"*
+*   *"Increase chair inventory by 10"*
+*   *"Show me all products with low stock"*
 
-**Backend:**
-- Node.js + Express
-- MongoDB + Mongoose
-- JWT Authentication
-- Groq AI (llama-3.3-70b-versatile)
+### 🛡️ Resilience & "Always-On" Demo Mode
+Designed for high-stakes presentations. The system features a **Multi-Tier Database Fallback**:
+*   **Cloud Mode**: Connects to MongoDB Atlas.
+*   **Emergency Bypass**: Includes a built-in "Demo Admin" (`admin@kognio.ai`) that works even without an internet connection or if the database is blocked by firewalls.
 
-**Frontend:**
-- React 18 + Vite
-- React Router
-- Axios
-- Web Speech API
+### 📊 AI Health Scoring
+A dynamic KPI engine that calculates the real-time "Health" of your inventory based on stock movement, dead stock periods, and overstock thresholds.
 
-## 📋 Prerequisites
+---
 
-- Node.js (v16+)
-- MongoDB Atlas account
-- Groq API Key ([Get it here](https://console.groq.com))
+## 📐 System Architecture
 
-## 🚀 Installation
-
-### Backend Setup
-
-1. Navigate to backend folder:
-```bash
-cd backend
+```mermaid
+graph TD
+    A[User Voice/Text] -->|Input| B(NLP Controller)
+    B -->|Intent Parsing| C{Groq AI Engine}
+    C -->|Structured JSON| D[Inventory Service]
+    D -->|CRUD Ops| E[(MongoDB Atlas)]
+    E -->|Real-time Data| F[React Dashboard]
+    F -->|Visual Insights| G[End User]
 ```
 
-2. Install dependencies:
-```bash
-npm install
-```
+---
 
-3. Configure environment variables in `.env`:
-```env
-PORT=5000
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/dbname
-JWT_SECRET=your_jwt_secret_key_here
-JWT_EXPIRE=7d
-GROQ_API_KEY=your_groq_api_key_here
-GROQ_MODEL=llama-3.3-70b-versatile
-NODE_ENV=development
-```
+## 🛠️ Technology Stack
 
-4. Start the server:
-```bash
-npm run dev
-```
-✅ Backend running on http://localhost:5000
 
-### Frontend Setup
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | React 18, Vite, Framer Motion, Tailwind CSS, Lucide Icons |
+| **Backend** | Node.js, Express.js, JWT Security, Bcrypt Hashing |
+| **Intelligence** | Llama 3.3 (via Groq AI), Web Speech API |
+| **Data** | MongoDB Atlas, Mongoose ODM |
 
-1. Navigate to frontend folder:
-```bash
-cd frontend
-```
+---
 
-2. Install dependencies:
-```bash
-npm install
-```
+## 🚀 Quick Start (Demo Mode)
 
-3. Configure environment variables in `.env`:
-```env
-VITE_API_URL=http://localhost:5000/api
-```
+To run the project locally and see the "Smart" features in action:
 
-4. Start the development server:
-```bash
-npm run dev
-```
-✅ Frontend running on http://localhost:3000
+1. **Clone & Install**:
+   ```bash
+   # Backend
+   cd backend && npm install && npm run dev
+   
+   # Frontend
+   cd frontend && npm install && npm run dev
+   ```
+2. **Access**: Open `http://localhost:3000`
+3. **Login (Instant Demo)**:
+   *   **User**: `admin@kognio.ai`
+   *   **Pass**: `admin123`
 
-## 📱 Usage
+---
 
-1. Open http://localhost:3000
-2. Navigate to different sections:
-   - **Dashboard** - View inventory stats and recent activities
-   - **Products** - Manage products (Add, Edit, Delete)
-   - **Stock** - Add or remove stock
-   - **Voice** - Use voice commands
-   - **Chat** - Type commands and chat with AI assistant
-   - **Reports** - View transaction history and alerts
+## 👨‍💻 Developed By (Team Kognio)
 
-## 🎤 Voice Commands Examples
+This project was developed as a collaborative engineering effort by:
 
-```
-"Add 50 laptops"
-"Remove 10 chairs"
-"Show me laptop details"
-"List all products"
-"Show low stock items"
-"Create product phone with price 500"
-"Update laptop price to 48000"
-```
+*   **Om Ashok Shedage** - *PRN: 2267571242112*
+*   **Rohit Rajendra Gaikwad** - *PRN: 2267571242113*
+*   **Prathmesh Gajanan Sose** - *PRN: 2267571242114*
+*   **Sujit Bhauso Chavan** - *PRN: 2267571242115*
+*   **Jay Sanjay Ithape** - *PRN: 2267571242120*
 
-## 🔌 API Endpoints
+---
 
-### Products
-- `POST /api/products` - Create product
-- `GET /api/products` - Get all products
-- `GET /api/products/:id` - Get single product
-- `PUT /api/products/:id` - Update product
-- `DELETE /api/products/:id` - Delete product
+## ⚡ Voice Command Examples
+You can use these directly in the **Voice AI** or **Chat AI** sections:
+*   `"Create product iPhone 15 with price 79000"`
+*   `"Update Macbook price to 125000"`
+*   `"Add 5 units of Sony Headphones"`
+*   `"Remove 2 units from Tablet stock"`
 
-### Stock Management
-- `POST /api/stock/add` - Add stock
-- `POST /api/stock/remove` - Remove stock
-- `GET /api/stock/low` - Get low stock items
-- `GET /api/stock/value` - Get total stock value
-
-### Voice/NLP
-- `POST /api/nlp/process-command` - Process voice command
-
-### Reports
-- `GET /api/reports/dashboard` - Dashboard stats
-- `GET /api/reports/transactions` - Transaction history
-- `GET /api/reports/alerts` - Active alerts
-- `PUT /api/reports/alerts/:id/dismiss` - Dismiss alert
-
-## 📁 Project Structure
-
-```
-ai-smart-inventory/
-├── backend/
-│   ├── config/          # Database configuration
-│   ├── models/          # Mongoose models
-│   ├── routes/          # API routes
-│   ├── controllers/     # Route controllers
-│   ├── middleware/      # Custom middleware
-│   ├── services/        # Business logic (NLP, Alerts)
-│   └── server.js        # Entry point
-│
-└── frontend/
-    └── src/
-        ├── components/  # React components
-        │   ├── auth/
-        │   ├── dashboard/
-        │   ├── products/
-        │   ├── stock/
-        │   ├── voice/
-        │   └── reports/
-        ├── context/     # Context providers
-        ├── services/    # API services
-        ├── hooks/       # Custom hooks
-        └── App.jsx      # Main app component
-```
-
-## 🧪 Testing
-
-See [API_TESTING.md](API_TESTING.md) for detailed API testing guide.
-
-## 🚀 Deployment
-
-See [DEPLOYMENT.md](DEPLOYMENT.md) for deployment instructions.
-
-## 📝 License
-
-MIT
-
-## 👨‍💻 Author
-
-Your Name
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
-
-## ⭐ Show your support
-
-Give a ⭐️ if this project helped you!
+---
+⭐️ **If this project helped you, give it a star on GitHub!**

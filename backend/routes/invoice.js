@@ -21,7 +21,9 @@ router.post("/", async (req, res) => {
 /* GET ALL */
 
 router.get("/", async (req, res) => {
-  const invoices = await Invoice.find().sort("-createdAt");
+  const query = {};
+  if (req.query.supplierName) query.supplierName = req.query.supplierName;
+  const invoices = await Invoice.find(query).sort("-createdAt");
   res.json(invoices);
 });
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { productService } from '../../services/productService';
 import ProductForm from './ProductForm';
 
-import { Plus, Pencil, Trash2, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Package } from "lucide-react";
 
 export default function ProductList() {
 
@@ -56,25 +56,6 @@ export default function ProductList() {
   };
 
 
-  const handleDelete = async (id) => {
-
-    if (window.confirm('Delete this product?')) {
-
-      try {
-
-        await productService.delete(id);
-
-        fetchProducts();
-
-      } catch (error) {
-
-        alert('Error deleting product');
-
-      }
-
-    }
-
-  };
 
 
   const handleEdit = (product) => {
@@ -99,15 +80,21 @@ export default function ProductList() {
 
   return (
 
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-7xl mx-auto">
 
       {/* HEADER */}
 
       <div className="flex justify-between items-center">
 
-        <h1 className="text-2xl font-semibold text-gray-800">
-          Products
-        </h1>
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-emerald-100 text-emerald-600 rounded-xl">
+            <Package size={24} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">Product Inventory</h1>
+            <p className="text-gray-500 text-sm">Manage your catalog, SKUs, and stock limits</p>
+          </div>
+        </div>
 
         <button
           onClick={() => setShowForm(true)}
@@ -157,13 +144,13 @@ export default function ProductList() {
 
             <tr>
 
-              <th className="text-left px-6 py-4">Name</th>
+              <th className="text-left px-6 py-4">Name & SKU</th>
 
               <th className="text-left px-6 py-4">Unit Price</th>
 
-              <th className="text-left px-6 py-4">Quantity</th>
+              <th className="text-left px-6 py-4">Status</th>
 
-              <th className="text-left px-6 py-4">Min Stock</th>
+              <th className="text-left px-6 py-4">Quantity</th>
 
               <th className="text-left px-6 py-4">Total Value</th>
 
@@ -189,41 +176,36 @@ export default function ProductList() {
                   className="border-t hover:bg-gray-50 transition"
                 >
 
-                  {/* NAME */}
+                  {/* NAME & SKU */}
 
-                  <td className="px-6 py-4 font-medium text-gray-800">
-                    {product.name}
+                  <td className="px-6 py-4">
+                    <p className="font-medium text-gray-900">{product.name}</p>
+                    {product.sku && <p className="text-xs text-gray-400 font-mono mt-1">SKU: {product.sku}</p>}
                   </td>
-
 
                   {/* UNIT PRICE */}
 
-                  <td className="px-6 py-4 text-gray-600">
-                    ₹{product.price}
+                  <td className="px-6 py-4 text-gray-600 font-medium">
+                    ₹{product.price.toLocaleString("en-IN")}
                   </td>
 
+                  {/* STATUS */}
+                  
+                  <td className="px-6 py-4">
+                    {product.quantity === 0 ? (
+                      <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-red-50 text-red-600 border border-red-100">Out of Stock</span>
+                    ) : lowStock ? (
+                      <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-50 text-amber-600 border border-amber-100">Low Stock</span>
+                    ) : (
+                      <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">In Stock</span>
+                    )}
+                  </td>
 
                   {/* QUANTITY */}
 
                   <td className="px-6 py-4">
-
-                    <span
-                      className={`px-3 py-1 text-xs rounded-full font-medium
-                      ${lowStock
-                        ? "bg-red-100 text-red-600"
-                        : "bg-green-100 text-green-600"
-                      }`}
-                    >
-                      {product.quantity}
-                    </span>
-
-                  </td>
-
-
-                  {/* MIN STOCK */}
-
-                  <td className="px-6 py-4 text-gray-600">
-                    {product.minStockLevel}
+                    <span className="font-semibold text-gray-800">{product.quantity}</span>
+                    <span className="text-xs text-gray-400 ml-1">/ Min: {product.minStockLevel || 10}</span>
                   </td>
 
 
@@ -237,21 +219,12 @@ export default function ProductList() {
                   {/* ACTIONS */}
 
                   <td className="px-6 py-4 flex justify-end gap-2">
-
                     <button
                       onClick={() => handleEdit(product)}
-                      className="p-2 rounded-lg hover:bg-gray-100"
+                      className="p-2 rounded-lg hover:bg-gray-100 flex items-center gap-2 text-indigo-500 font-medium"
                     >
-                      <Pencil size={16} className="text-indigo-500" />
+                      <Pencil size={16} /> Edit
                     </button>
-
-                    <button
-                      onClick={() => handleDelete(product._id)}
-                      className="p-2 rounded-lg hover:bg-gray-100"
-                    >
-                      <Trash2 size={16} className="text-red-500" />
-                    </button>
-
                   </td>
 
                 </tr>

@@ -25,13 +25,19 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
+  const googleLogin = async (userData) => {
+    const data = await authService.googleLogin(userData);
+    setUser(data.user);
+    return data;
+  };
+
   const logout = () => {
     authService.logout();
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, googleLogin, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

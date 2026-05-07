@@ -1,336 +1,225 @@
 import { useState, useEffect } from 'react';
 import { productService } from '../../services/productService';
-import { PlusCircle, MinusCircle, Package } from "lucide-react";
+import { ArrowDownToLine, ArrowUpFromLine, AlertCircle } from "lucide-react";
 
 export default function StockManagement() {
-
-const [products,setProducts]=useState([])
-const [selectedProduct,setSelectedProduct]=useState("")
-const [quantity,setQuantity]=useState("")
-const [reason,setReason]=useState("")
-
-/* NEW PRODUCT STATES */
-
-const [createNew,setCreateNew]=useState(false)
-const [newProductName,setNewProductName]=useState("")
-const [newPrice,setNewPrice]=useState("")
-const [minStock,setMinStock]=useState("10")
-
-useEffect(()=>{
-fetchProducts()
-},[])
-
-const fetchProducts=async()=>{
-try{
-const response=await productService.getAll()
-setProducts(response.data)
-}catch(error){
-console.error("Error fetching products:",error)
-}
-}
-
-/* ADD STOCK */
-
-const handleAddStock=async(e)=>{
-
-e.preventDefault()
-
-try{
-
-let productId = selectedProduct
-
-/* CREATE PRODUCT IF NEW */
-
-if(createNew){
-
-const created=await productService.create({
-name:newProductName,
-price:Number(newPrice),
-quantity:0,
-minStockLevel:Number(minStock)
-})
-
-productId = created.data._id
-
-}
-
-/* ADD STOCK */
-
-await productService.addStock({
-productId,
-quantity:Number(quantity),
-reason
-})
-
-alert("Stock added successfully")
-
-/* RESET FORM */
-
-setQuantity("")
-setReason("")
-setNewProductName("")
-setNewPrice("")
-setCreateNew(false)
-
-fetchProducts()
-
-window.dispatchEvent(new Event("inventoryUpdated"))
-
-}catch(error){
-
-alert("Error adding stock")
-
-}
-
-}
-
-/* REMOVE STOCK */
-
-const handleRemoveStock=async(e)=>{
-
-e.preventDefault()
-
-try{
-
-await productService.removeStock({
-productId:selectedProduct,
-quantity:Number(quantity),
-reason
-})
-
-alert("Stock removed successfully")
-
-setQuantity("")
-setReason("")
-
-fetchProducts()
-
-window.dispatchEvent(new Event("inventoryUpdated"))
-
-}catch(error){
-
-alert(error.response?.data?.message || "Error removing stock")
-
-}
-
-}
-
-return(
-
-<div className="space-y-8">
-
-<h1 className="text-2xl font-semibold text-gray-800">
-Stock Management
-</h1>
-
-<div className="grid md:grid-cols-2 gap-8">
-
-{/* ADD STOCK */}
-
-<div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl shadow-sm p-6">
-
-<div className="flex items-center gap-2 mb-6">
-
-<PlusCircle size={20} className="text-blue-600"/>
-
-<h2 className="font-semibold text-gray-700">
-Add Stock
-</h2>
-
-</div>
-
-<form onSubmit={handleAddStock} className="space-y-4">
-
-{/* PRODUCT MODE SWITCH */}
-
-<div className="flex gap-4 text-sm">
-
-<label className="flex items-center gap-2">
-
-<input
-type="radio"
-checked={!createNew}
-onChange={()=>setCreateNew(false)}
-/>
-
-Existing Product
-
-</label>
-
-<label className="flex items-center gap-2">
-
-<input
-type="radio"
-checked={createNew}
-onChange={()=>setCreateNew(true)}
-/>
-
-Create New Product
-
-</label>
-
-</div>
-
-{/* EXISTING PRODUCT */}
-
-{!createNew && (
-
-<select
-value={selectedProduct}
-onChange={(e)=>setSelectedProduct(e.target.value)}
-className="w-full border border-gray-200 rounded-xl px-4 py-2"
-required
->
-
-<option value="">Select Product</option>
-
-{products.map(p=>(
-<option key={p._id} value={p._id}>
-{p.name} (Current: {p.quantity})
-</option>
-))}
-
-</select>
-
-)}
-
-{/* NEW PRODUCT FORM */}
-
-{createNew && (
-
-<div className="space-y-3">
-
-<input
-type="text"
-placeholder="Product Name"
-value={newProductName}
-onChange={(e)=>setNewProductName(e.target.value)}
-className="w-full border border-gray-200 rounded-xl px-4 py-2"
-required
-/>
-
-<input
-type="number"
-placeholder="Product Price"
-value={newPrice}
-onChange={(e)=>setNewPrice(e.target.value)}
-className="w-full border border-gray-200 rounded-xl px-4 py-2"
-required
-/>
-
-<input
-type="number"
-placeholder="Min Stock Level"
-value={minStock}
-onChange={(e)=>setMinStock(e.target.value)}
-className="w-full border border-gray-200 rounded-xl px-4 py-2"
-/>
-
-</div>
-
-)}
-
-<input
-type="number"
-placeholder="Quantity"
-value={quantity}
-onChange={(e)=>setQuantity(e.target.value)}
-className="w-full border border-gray-200 rounded-xl px-4 py-2"
-required
-min="1"
-/>
-
-<input
-type="text"
-placeholder="Reason"
-value={reason}
-onChange={(e)=>setReason(e.target.value)}
-className="w-full border border-gray-200 rounded-xl px-4 py-2"
-required
-/>
-
-<button
-type="submit"
-className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-2 rounded-xl"
->
-
-Add Stock
-
-</button>
-
-</form>
-
-</div>
-
-{/* REMOVE STOCK */}
-
-<div className="bg-gradient-to-br from-red-50 to-rose-50 border border-red-100 rounded-2xl shadow-sm p-6">
-
-<div className="flex items-center gap-2 mb-6">
-
-<MinusCircle size={20} className="text-red-500"/>
-
-<h2 className="font-semibold text-gray-700">
-Remove Stock
-</h2>
-
-</div>
-
-<form onSubmit={handleRemoveStock} className="space-y-4">
-
-<select
-value={selectedProduct}
-onChange={(e)=>setSelectedProduct(e.target.value)}
-className="w-full border border-gray-200 rounded-xl px-4 py-2"
-required
->
-
-<option value="">Select Product</option>
-
-{products.map(p=>(
-<option key={p._id} value={p._id}>
-{p.name} (Current: {p.quantity})
-</option>
-))}
-
-</select>
-
-<input
-type="number"
-placeholder="Quantity"
-value={quantity}
-onChange={(e)=>setQuantity(e.target.value)}
-className="w-full border border-gray-200 rounded-xl px-4 py-2"
-required
-min="1"
-/>
-
-<input
-type="text"
-placeholder="Reason"
-value={reason}
-onChange={(e)=>setReason(e.target.value)}
-className="w-full border border-gray-200 rounded-xl px-4 py-2"
-required
-/>
-
-<button
-type="submit"
-className="w-full bg-gradient-to-r from-red-500 to-rose-500 text-white py-2 rounded-xl"
->
-
-Remove Stock
-
-</button>
-
-</form>
-
-</div>
-
-</div>
-
-</div>
-
-)
-
+  const [products, setProducts] = useState([]);
+  
+  // Add Stock State
+  const [addSelectedProduct, setAddSelectedProduct] = useState("");
+  const [addQuantity, setAddQuantity] = useState("");
+  const [addReason, setAddReason] = useState("");
+
+  // Remove Stock State
+  const [removeSelectedProduct, setRemoveSelectedProduct] = useState("");
+  const [removeQuantity, setRemoveQuantity] = useState("");
+  const [removeReason, setRemoveReason] = useState("");
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await productService.getAll({});
+      const data = response.data?.products || response.data;
+      setProducts(data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  /* ADD STOCK */
+  const handleAddStock = async (e) => {
+    e.preventDefault();
+    try {
+      await productService.addStock({
+        productId: addSelectedProduct,
+        quantity: Number(addQuantity),
+        reason: addReason
+      });
+
+      alert("Stock Added & Logged to Ledger");
+      
+      setAddQuantity("");
+      setAddReason("");
+      setAddSelectedProduct("");
+      fetchProducts();
+      window.dispatchEvent(new Event("inventoryUpdated"));
+    } catch (error) {
+      alert("Error adding stock");
+    }
+  };
+
+  /* REMOVE STOCK */
+  const handleRemoveStock = async (e) => {
+    e.preventDefault();
+    try {
+      await productService.removeStock({
+        productId: removeSelectedProduct,
+        quantity: Number(removeQuantity),
+        reason: removeReason
+      });
+
+      alert("Stock Removed & Logged to Ledger");
+
+      setRemoveQuantity("");
+      setRemoveReason("");
+      setRemoveSelectedProduct("");
+      fetchProducts();
+      window.dispatchEvent(new Event("inventoryUpdated"));
+    } catch (error) {
+      alert(error.response?.data?.message || "Error removing stock");
+    }
+  };
+
+  return (
+    <div className="space-y-8 max-w-5xl">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-800">Manual Stock Adjustments</h1>
+        <p className="text-gray-500 text-sm mt-1">Use this page for manual cycle counts, damages, or shrinkage. All actions are securely recorded in the Stock Ledger.</p>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-8">
+        
+        {/* STOCK IN (ADD) */}
+        <div className="bg-white border border-emerald-100 rounded-3xl shadow-sm overflow-hidden">
+          <div className="bg-emerald-50 px-6 py-4 border-b border-emerald-100 flex items-center gap-3">
+            <div className="p-2 bg-emerald-100 text-emerald-700 rounded-xl">
+              <ArrowDownToLine size={20} />
+            </div>
+            <div>
+              <h2 className="font-bold text-emerald-900">Stock In (Add)</h2>
+              <p className="text-xs text-emerald-700 font-medium">Found stock or direct intake</p>
+            </div>
+          </div>
+          
+          <form onSubmit={handleAddStock} className="p-6 space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Select Product</label>
+              <select
+                value={addSelectedProduct}
+                onChange={(e) => setAddSelectedProduct(e.target.value)}
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 transition"
+                required
+              >
+                <option value="">-- Choose Product --</option>
+                {products.map(p => (
+                  <option key={p._id} value={p._id}>
+                    {p.name} (Current: {p.quantity})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Quantity to Add</label>
+                <input
+                  type="number"
+                  placeholder="e.g. 50"
+                  value={addQuantity}
+                  onChange={(e) => setAddQuantity(e.target.value)}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 transition"
+                  required
+                  min="1"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Reason for Addition</label>
+              <input
+                type="text"
+                placeholder="e.g. Found in back warehouse"
+                value={addReason}
+                onChange={(e) => setAddReason(e.target.value)}
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 transition"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 rounded-xl transition shadow-md shadow-emerald-200 flex justify-center items-center gap-2"
+            >
+              Confirm Stock In
+            </button>
+          </form>
+        </div>
+
+        {/* STOCK OUT (REMOVE) */}
+        <div className="bg-white border border-rose-100 rounded-3xl shadow-sm overflow-hidden">
+          <div className="bg-rose-50 px-6 py-4 border-b border-rose-100 flex items-center gap-3">
+            <div className="p-2 bg-rose-100 text-rose-700 rounded-xl">
+              <ArrowUpFromLine size={20} />
+            </div>
+            <div>
+              <h2 className="font-bold text-rose-900">Stock Out (Remove)</h2>
+              <p className="text-xs text-rose-700 font-medium">Damages, shrinkage, or manual disposal</p>
+            </div>
+          </div>
+
+          <form onSubmit={handleRemoveStock} className="p-6 space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Select Product</label>
+              <select
+                value={removeSelectedProduct}
+                onChange={(e) => setRemoveSelectedProduct(e.target.value)}
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-rose-500 transition"
+                required
+              >
+                <option value="">-- Choose Product --</option>
+                {products.map(p => (
+                  <option key={p._id} value={p._id}>
+                    {p.name} (Current: {p.quantity})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Quantity to Remove</label>
+                <input
+                  type="number"
+                  placeholder="e.g. 5"
+                  value={removeQuantity}
+                  onChange={(e) => setRemoveQuantity(e.target.value)}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-rose-500 transition"
+                  required
+                  min="1"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Reason for Removal</label>
+              <input
+                type="text"
+                placeholder="e.g. Damaged in transit"
+                value={removeReason}
+                onChange={(e) => setRemoveReason(e.target.value)}
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-rose-500 transition"
+                required
+              />
+            </div>
+
+            <div className="bg-orange-50 border border-orange-100 p-3 rounded-xl flex gap-2 text-xs text-orange-800 font-medium">
+              <AlertCircle size={16} className="shrink-0" />
+              <p>Warning: This action will permanently deduct from your live inventory and cannot be deleted from the audit ledger.</p>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-rose-600 hover:bg-rose-700 text-white font-medium py-3 rounded-xl transition shadow-md shadow-rose-200 flex justify-center items-center gap-2"
+            >
+              Confirm Stock Out
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  );
 }

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { productService } from '../../services/productService';
+import { X, Package } from 'lucide-react';
 
 export default function ProductForm({ product, onClose }) {
   const [formData, setFormData] = useState({
     name: '',
+    sku: '',
     price: '',
     quantity: '',
     minStockLevel: 10,
@@ -31,56 +33,106 @@ export default function ProductForm({ product, onClose }) {
   };
 
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ background: 'white', padding: '30px', borderRadius: '8px', width: '500px' }}>
-        <h2>{product ? 'Edit Product' : 'Add Product'}</h2>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Product Name"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
-            required
-          />
-          <input
-            type="number"
-            placeholder="Price"
-            value={formData.price}
-            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-            style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
-            required
-          />
-          <input
-            type="number"
-            placeholder="Quantity"
-            value={formData.quantity}
-            onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-            style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
-            required
-          />
-          <input
-            type="number"
-            placeholder="Min Stock Level"
-            value={formData.minStockLevel}
-            onChange={(e) => setFormData({ ...formData, minStockLevel: e.target.value })}
-            style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
-          />
-          <textarea
-            placeholder="Description"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            style={{ width: '100%', padding: '10px', marginBottom: '10px', minHeight: '80px' }}
-          />
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <button type="submit" style={{ flex: 1, padding: '10px', background: '#28a745', color: 'white', border: 'none', cursor: 'pointer' }}>
-              Save
-            </button>
-            <button type="button" onClick={onClose} style={{ flex: 1, padding: '10px', background: '#6c757d', color: 'white', border: 'none', cursor: 'pointer' }}>
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+      <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden">
+        
+        {/* HEADER */}
+        <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-indigo-100 text-indigo-600 rounded-xl">
+              <Package size={20} />
+            </div>
+            <h2 className="text-xl font-bold text-gray-800">
+              {product ? 'Edit Product' : 'Add New Product'}
+            </h2>
+          </div>
+          <button 
+            onClick={onClose}
+            className="p-2 text-gray-400 hover:bg-gray-200 hover:text-gray-600 rounded-full transition"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* FORM */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+            <input
+              type="text"
+              placeholder="e.g. Dell XPS 15"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full border border-gray-200 p-3 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">SKU (Optional)</label>
+            <input
+              type="text"
+              placeholder="e.g. LPT-DEL-001"
+              value={formData.sku || ''}
+              onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+              className="w-full border border-gray-200 p-3 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition uppercase"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
+              <input
+                type="number"
+                placeholder="0"
+                value={formData.price}
+                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                className="w-full border border-gray-200 p-3 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+              <input
+                type="number"
+                placeholder="0"
+                value={formData.quantity}
+                onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                className="w-full border border-gray-200 p-3 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Low Stock Alert Level</label>
+            <input
+              type="number"
+              placeholder="10"
+              value={formData.minStockLevel}
+              onChange={(e) => setFormData({ ...formData, minStockLevel: e.target.value })}
+              className="w-full border border-gray-200 p-3 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+            />
+          </div>
+
+          {/* ACTIONS */}
+          <div className="pt-4 mt-6 border-t border-gray-100 flex gap-3">
+            <button 
+              type="button" 
+              onClick={onClose} 
+              className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition"
+            >
               Cancel
+            </button>
+            <button 
+              type="submit" 
+              className="flex-1 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl transition shadow-md shadow-indigo-200"
+            >
+              {product ? 'Save Changes' : 'Create Product'}
             </button>
           </div>
         </form>
+
       </div>
     </div>
   );

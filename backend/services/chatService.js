@@ -54,10 +54,14 @@ function validateIntent(intent){
     "add_stock",
     "remove_stock",
     "create_product",
+    "update_product",
+    "delete_product",
     "list_products",
     "inventory_value",
     "view_product",
-    "low_stock" // ✅ ADDED
+    "low_stock",
+    "dead_stock",
+    "overstock"
   ];
 
   if(!allowedActions.includes(intent.action)){
@@ -82,76 +86,73 @@ AI INTENT PARSER
 async function parseIntent(message, inventorySummary) {
 
 const systemPrompt = `
-You are an AI inventory assistant.
-
-Convert user messages into JSON commands.
+You are an AI inventory assistant for Kognio Inventory Management System.
+The user may provide commands in ANY language (English, Hindi, Marathi, etc.).
+Convert user messages into JSON commands. Translate all intent and product names to English.
 
 Supported actions:
-
 add_stock
 remove_stock
 create_product
+update_product
+delete_product
 list_products
 inventory_value
 view_product
 low_stock
+dead_stock
+overstock
 
-Return ONLY JSON.
+Return ONLY valid JSON (no extra text, no markdown).
 
 Examples:
 
 User: add 10 laptops
-{
-"action":"add_stock",
-"product_name":"laptop",
-"quantity":10
-}
+{"action":"add_stock","product_name":"laptop","quantity":10}
 
 User: add 100 books for 2000
-{
-"action":"add_stock",
-"product_name":"books",
-"quantity":100,
-"price":2000
-}
+{"action":"add_stock","product_name":"books","quantity":100,"price":2000}
+
+User: remove 5 chairs
+{"action":"remove_stock","product_name":"chairs","quantity":5}
 
 User: create product gpu price 30000
-{
-"action":"create_product",
-"product_name":"gpu",
-"price":30000
-}
+{"action":"create_product","product_name":"gpu","price":30000}
+
+User: create product monitor with 50 units at 15000
+{"action":"create_product","product_name":"monitor","quantity":50,"price":15000}
+
+User: update laptop price to 55000
+{"action":"update_product","product_name":"laptop","price":55000}
+
+User: set minimum stock level for gpu to 10
+{"action":"update_product","product_name":"gpu","minStockLevel":10}
+
+User: delete product old keyboard
+{"action":"delete_product","product_name":"old keyboard"}
 
 User: how many laptops do I have
-{
-"action":"view_product",
-"product_name":"laptop"
-}
+{"action":"view_product","product_name":"laptop"}
+
+User: what is the price of gpu
+{"action":"view_product","product_name":"gpu"}
 
 User: show inventory
-{
-"action":"list_products"
-}
+{"action":"list_products"}
 
 User: show low stock items
-{
-"action":"low_stock"
-}
+{"action":"low_stock"}
 
 User: what's my inventory value
-{
-"action":"inventory_value"
-}
+{"action":"inventory_value"}
 
-Languages supported:
-English
-Hindi
-Marathi
-Tamil
-Telugu
-Kannada
-Gujarati
-Punjabi
+User: show dead stock
+{"action":"dead_stock"}
+
+User: which products are overstocked
+{"action":"overstock"}
+
+Languages supported: English, Hindi, Marathi, Tamil, Telugu, Kannada, Gujarati, Punjabi
 `;
 
   const response = await groq.chat.completions.create({
@@ -218,29 +219,34 @@ exports.chat = async (message, sessionId="default") => {
 
   }
 
-  if (/^hi|hello|hey|namaste/i.test(message)) {
-
+  if (/^(hi|hello|hey|namaste)/i.test(message)) {
     return {
       type: "conversation",
       response:
-`👋 Hello! I'm your AI Inventory Assistant.
+`👋 Hello! I'm **Kognio AI**, your intelligent inventory assistant.
 
-I can help you:
+Here's everything I can do for you:
 
-• Add stock
-• Remove stock
-• Create products
-• Show inventory
-• Check stock value
-• Show low stock items
+📦 **Stock Management**
+• "Add 50 laptops" — Add stock to a product
+• "Remove 10 chairs" — Reduce stock
+• "How many GPUs do I have?" — View product details
 
-Examples:
-add 10 laptops
-create product gpu price 30000
-show inventory
-show low stock items`
+🏷️ **Product Management**
+• "Create product Monitor at ₹15000" — Add a new product
+• "Update laptop price to ₹55000" — Edit product details
+• "Set minimum stock for GPU to 10" — Update min level
+• "Delete product old keyboard" — Remove a product
+
+📊 **Inventory Intelligence**
+• "Show all products" — List full inventory
+• "What's my total inventory value?" — Stock valuation
+• "Show low stock items" — Products needing restock
+• "Show dead stock" — Products with no movement (30 days)
+• "Which products are overstocked?" — Excess inventory
+
+💬 I also support **Hindi, Marathi, and other Indian languages!**`
     };
-
   }
 
   const state = getSessionState(sessionId);

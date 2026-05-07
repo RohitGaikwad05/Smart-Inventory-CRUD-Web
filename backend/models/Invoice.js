@@ -4,6 +4,7 @@ const invoiceSchema = new mongoose.Schema({
 
   invoiceNumber: String,
   customerName: String,
+  supplierName: String,
 
   items: [
     {

@@ -10,22 +10,37 @@ router.get('/dashboard', async (req, res) => {
   try {
     const totalProducts = await Product.countDocuments();
     const lowStockCount = await Product.countDocuments({ $expr: { $lte: ['$quantity', '$minStockLevel'] } });
-
     const stockValue = await Product.aggregate([
       { $group: { _id: null, total: { $sum: { $multiply: ['$quantity', '$price'] } } } }
     ]);
-
     const recentTransactions = await Transaction.find()
       .sort('-createdAt')
       .limit(10)
       .populate('product user');
 
+    const products = await Product.find();
+    const last30Days = new Date(Date.now() - 30*24*60*60*1000);
+    const recentTrans = await Transaction.find({ createdAt: { $gte: last30Days } });
+    const movedIds = new Set(recentTrans.map(t=>String(t.product)));
+
+    const deadStockCount = products.filter(p=> !movedIds.has(String(p._id))).length;
+    const overStockCount = products.filter(p=> p.quantity > p.minStockLevel * 5).length;
+
+    // Standardized health score logic
+    const deadPenalty    = Math.min(deadStockCount * 4, 40);
+    const lowStockPenalty  = Math.min(lowStockCount * 3, 30);
+    const overStockPenalty = Math.min(overStockCount * 2, 20);
+    const healthScore = Math.max(0, 100 - deadPenalty - lowStockPenalty - overStockPenalty);
+
     res.json({
       totalProducts,
       lowStockCount,
       stockValue: stockValue[0]?.total || 0,
-      recentTransactions
+      recentTransactions,
+      healthScore
     });
+
+
 
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -142,10 +157,11 @@ router.get('/advanced-analytics', async (req,res)=>{
   try{
 
     const products = await Product.find();
-    const transactions = await Transaction.find();
+    const last30Days = new Date(Date.now() - 30*24*60*60*1000);
+    const transactions = await Transaction.find({ createdAt: { $gte: last30Days } });
+    const allTransactions = await Transaction.find();
 
     const productMovement = {};
-
     transactions.forEach(t=>{
       const id = String(t.product);
       if(!productMovement[id]) productMovement[id]=0;
@@ -160,18 +176,34 @@ router.get('/advanced-analytics', async (req,res)=>{
       .sort((a,b)=>b.movement-a.movement)
       .slice(0,5);
 
-    const deadStock = products.filter(p=>{
-      return !transactions.some(t=>String(t.product)===String(p._id));
-    });
+    // Dead stock = no movement in last 30 days
+    const movedIds = new Set(transactions.map(t=>String(t.product)));
+    const deadStock = products.filter(p=> !movedIds.has(String(p._id)));
 
-    const healthScore = Math.max(
-      0,
-      100 - deadStock.length * 5
-    );
+    // Low stock items
+    const lowStock = products.filter(p=> p.quantity <= p.minStockLevel);
+
+    // Overstock items (quantity > 5x minimum level)
+    const overStock = products.filter(p=> p.quantity > p.minStockLevel * 5);
+
+    // Multi-factor health score
+    const deadPenalty    = Math.min(deadStock.length * 4, 40);   // max 40pts off
+    const lowStockPenalty  = Math.min(lowStock.length * 3, 30);  // max 30pts off
+    const overStockPenalty = Math.min(overStock.length * 2, 20); // max 20pts off
+    const healthScore = Math.max(0, 100 - deadPenalty - lowStockPenalty - overStockPenalty);
 
     res.json({
       fastMoving,
       deadStock:deadStock.map(p=>({
+        name:p.name,
+        quantity:p.quantity
+      })),
+      lowStock:lowStock.map(p=>({
+        name:p.name,
+        quantity:p.quantity,
+        minStockLevel:p.minStockLevel
+      })),
+      overStock:overStock.map(p=>({
         name:p.name,
         quantity:p.quantity
       })),

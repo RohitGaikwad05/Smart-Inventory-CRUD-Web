@@ -6,7 +6,11 @@ import {
   MessageCircle,
   BarChart3,
   FileText,
-  Sparkles
+  Sparkles,
+  Users,
+  User,
+  LogOut,
+  History
 } from "lucide-react";
 
 import { NavLink, useLocation } from "react-router-dom";
@@ -16,12 +20,14 @@ const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
   { icon: Package, label: "Products", path: "/products" },
   { icon: Boxes, label: "Stock", path: "/stock" },
+  { icon: History, label: "Stock Ledger", path: "/transactions" },
+  { icon: Users, label: "Suppliers", path: "/suppliers" },
   { icon: Mic, label: "Voice", path: "/voice" },
   { icon: MessageCircle, label: "Chat", path: "/chat" },
   { icon: Sparkles, label: "AI Report", path: "/report-generator" },
   { icon: BarChart3, label: "Reports", path: "/reports" },
-  { icon: FileText, label: "Invoice", path: "/invoice" },
-  { icon: FileText, label: "Invoices", path: "/invoices" },
+  { icon: FileText, label: "Create Invoice", path: "/invoice" },
+  { icon: FileText, label: "All Invoices", path: "/invoices" },
 ];
 
 export default function Sidebar() {
@@ -132,6 +138,22 @@ export default function Sidebar() {
         })}
 
       </nav>
+
+      {/* Footer Profile & Logout */}
+      <div className="mt-auto pt-6 border-t border-gray-100 flex flex-col gap-2">
+        <NavLink
+          to="/profile"
+          className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
+              isActive ? "bg-indigo-50 text-indigo-600" : "text-gray-500 hover:bg-gray-100"
+            }`
+          }
+        >
+          <User size={18} />
+          Profile
+        </NavLink>
+      </div>
+
     </div>
   );
 }

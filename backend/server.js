@@ -6,9 +6,6 @@ const { errorHandler } = require('./middleware/errorHandler');
 const invoiceRoutes = require("./routes/invoice");
 const app = express();
 
-// Connect to database
-connectDB();
-
 // Middleware
 app.use(cors({
   origin: '*',
@@ -23,7 +20,9 @@ app.use('/api/stock', require('./routes/stock'));
 app.use('/api/nlp', require('./routes/nlp'));
 app.use('/api/chat', require('./routes/chat'));
 app.use('/api/reports', require('./routes/reports'));
-app.use("/api/invoices", invoiceRoutes);
+app.use("/api/invoices", require("./routes/invoice"));
+app.use("/api/suppliers", require("./routes/suppliers"));
+app.use("/api/transactions", require("./routes/transactions"));
 
 // Error handler
 app.use(errorHandler);
@@ -46,10 +45,16 @@ app.get('/debug', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Connect to database and start server
+connectDB().then(() => {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 });
+
+
 
 // Export for Vercel
 module.exports = app;
+

@@ -3,7 +3,16 @@ const { checkAndCreateAlert } = require('../services/alertService');
 
 exports.createProduct = async (req, res) => {
   try {
-    const product = await Product.create(req.body);
+    const productData = { ...req.body };
+    
+    // Auto-generate SKU if not provided
+    if (!productData.sku) {
+      const prefix = productData.name ? productData.name.substring(0, 3).toUpperCase() : 'PRD';
+      const randomNum = Math.floor(1000 + Math.random() * 9000);
+      productData.sku = `${prefix}-${randomNum}`;
+    }
+
+    const product = await Product.create(productData);
     await checkAndCreateAlert(product);
     res.status(201).json(product);
   } catch (error) {

@@ -3,17 +3,19 @@ const Product = require('../models/Product');
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-const systemPrompt = `You are an inventory management assistant. Extract information from user commands and return ONLY a JSON object.
+const systemPrompt = `You are an inventory management assistant for Kognio. The user may provide commands in ANY language (e.g., English, Hindi, Marathi, Spanish).
+Extract information from the user commands, translate the intent and product names to English, and return ONLY a JSON object with no extra text.
 
-Actions: add_stock, remove_stock, view_product, list_products, create_product, low_stock, update_product, delete_product
+Actions: add_stock, remove_stock, view_product, list_products, create_product, update_product, delete_product, low_stock, inventory_value, dead_stock, overstock
 
-Return format:
+Return format (MUST ALWAYS BE IN ENGLISH):
 {
   "action": "action_name",
-  "product_name": "string (if applicable)",
+  "product_name": "string (in English, if applicable)",
   "quantity": number (if applicable),
   "price": number (if applicable),
-  "category": "string (if applicable)"
+  "category": "string (if applicable)",
+  "minStockLevel": number (if applicable)
 }
 
 Examples:
@@ -22,7 +24,14 @@ Examples:
 "Show me laptop details" -> {"action":"view_product","product_name":"laptop"}
 "List all products" -> {"action":"list_products"}
 "Create product phone with price 500" -> {"action":"create_product","product_name":"phone","price":500}
-"Show low stock items" -> {"action":"low_stock"}`;
+"Create 10 monitors at 15000" -> {"action":"create_product","product_name":"monitor","quantity":10,"price":15000}
+"Update laptop price to 55000" -> {"action":"update_product","product_name":"laptop","price":55000}
+"Set minimum stock for gpu to 10" -> {"action":"update_product","product_name":"gpu","minStockLevel":10}
+"Delete product old keyboard" -> {"action":"delete_product","product_name":"old keyboard"}
+"Show low stock items" -> {"action":"low_stock"}
+"What is my inventory value" -> {"action":"inventory_value"}
+"Show dead stock" -> {"action":"dead_stock"}
+"Which products are overstocked" -> {"action":"overstock"}`;
 
 const findBestMatchProduct = async (searchName) => {
   if (!searchName) return null;

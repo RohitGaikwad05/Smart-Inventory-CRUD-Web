@@ -7,11 +7,13 @@ const invoiceRoutes = require("./routes/invoice");
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: '*',
-  credentials: true
-}));
+app.use(cors()); // Allow all origins for easy deployment
 app.use(express.json());
+
+// Health Check / Root Route
+app.get('/', (req, res) => {
+  res.send('Kognio Smart Inventory Backend is Running! 🚀');
+});
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));

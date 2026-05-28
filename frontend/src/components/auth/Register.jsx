@@ -20,7 +20,7 @@ export default function Register() {
       let finalEmail = account.email;
 
       if (account.isNew) {
-        finalName = window.prompt("Enter your Name for Kognio:", "Google User");
+        finalName = window.prompt("Enter your Name for Smart Inventory Crud Web Application With NLP:", "Google User");
         finalEmail = window.prompt("Enter your Gmail:", "user@gmail.com");
       }
       
@@ -65,7 +65,7 @@ export default function Register() {
         <div className="relative z-10 max-w-lg">
             <div className="flex items-center gap-4 mb-2">
               <img src="/logo.png" alt="Logo" className="w-12 h-12 object-contain bg-white rounded-xl p-2 shadow-lg" />
-              <h1 className="text-3xl font-bold">Kognio</h1>
+              <h1 className="text-xl font-bold leading-tight">Smart Inventory Crud Web Application With NLP</h1>
             </div>
             <div className="w-12 h-1 bg-[#00f2fe] mb-12 rounded"></div>
 
@@ -222,9 +222,9 @@ export default function Register() {
             <div>
             <div className="flex items-center gap-3 mb-1">
               <img src="/logo.png" alt="Logo" className="w-6 h-6 object-contain" />
-              <span className="font-bold text-[#5438dc] text-base">Kognio</span>
+              <span className="font-bold text-[#5438dc] text-base">Smart Inventory Crud Web Application With NLP</span>
             </div>
-            <p>© 2026 Kognio AI. All rights reserved. Inventory, Powered by Intelligence.</p>
+            <p>© 2026 Smart Inventory Crud Web Application With NLP. All rights reserved.</p>
             </div>
             <div className="flex gap-6 mt-4 md:mt-0">
             <a href="#" className="hover:text-gray-900">Privacy Policy</a>

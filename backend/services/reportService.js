@@ -4,7 +4,7 @@ const Transaction = require('../models/Transaction');
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-exports.generateReport = async () => {
+exports.generateReport = async (lang = 'en') => {
   try {
 
     const products = await Product.find();
@@ -12,7 +12,7 @@ exports.generateReport = async () => {
 
     if (products.length === 0) {
       return {
-        report: "No inventory data available.",
+        report: lang === 'mr' ? "इन्व्हेंटरी डेटा उपलब्ध नाही." : (lang === 'hi' ? "इन्वेंटरी डेटा उपलब्ध नहीं है।" : "No inventory data available."),
         data: {},
         generatedAt: new Date()
       };
@@ -110,7 +110,24 @@ exports.generateReport = async () => {
 
     /* AI REPORT PROMPT */
 
-    const prompt = `You are an expert inventory analyst generating a professional business intelligence report for an Indian SME using the Kognio Inventory Management System.
+    let languageInstruction = "";
+    if (lang === "mr") {
+      languageInstruction = "CRITICAL REQUIREMENT: You MUST write the ENTIRE report in MARATHI (मराठी). All section titles and content must be in Marathi language only. Translate terms like 'Executive Summary' to 'कार्यकारी सारांश', 'Inventory Health Score' to 'इन्व्हेंटरी आरोग्य स्कोअर', etc.";
+    } else if (lang === "hi") {
+      languageInstruction = "CRITICAL REQUIREMENT: You MUST write the ENTIRE report in HINDI (हिंदी). All section titles and content must be in Hindi language only. Translate terms like 'Executive Summary' to 'कार्यकारी सारांश', 'Inventory Health Score' to 'इन्वेंटरी हेल्थ स्कोर', etc.";
+    } else if (lang === "ta") {
+      languageInstruction = "CRITICAL REQUIREMENT: You MUST write the ENTIRE report in TAMIL (தமிழ்). All section titles and content must be in Tamil language only. Translate terms like 'Executive Summary' to 'நிர்வாக சுருக்கம்', 'Inventory Health Score' to 'சரக்கு ஆரோக்கிய மதிப்பெண்', etc.";
+    } else if (lang === "pa") {
+      languageInstruction = "CRITICAL REQUIREMENT: You MUST write the ENTIRE report in PUNJABI (ਪੰਜਾਬੀ). All section titles and content must be in Punjabi language only. Translate terms like 'Executive Summary' to 'ਕਾਰਜਕਾਰੀ ਸਾਰਾਂਸ਼', 'Inventory Health Score' to 'ਇਨਵੈਂਟਰੀ ਸਿਹਤ ਸਕੋਰ', etc.";
+    } else if (lang === "gu") {
+      languageInstruction = "CRITICAL REQUIREMENT: You MUST write the ENTIRE report in GUJARATI (ગુજરાતી). All section titles and content must be in Gujarati language only. Translate terms like 'Executive Summary' to 'કાર્યકારી સારાંશ', 'Inventory Health Score' to 'ઇન્વેન્ટરી હેલ્થ સ્કોર', etc.";
+    } else {
+      languageInstruction = "CRITICAL REQUIREMENT: You MUST write the ENTIRE report in ENGLISH.";
+    }
+
+    const prompt = `You are an expert inventory analyst generating a professional business intelligence report for an Indian SME using the Smart Inventory CRUD Web Application With NLP.
+
+${languageInstruction}
 
 Current Inventory Data:
 ${JSON.stringify(reportData, null, 2)}
@@ -119,7 +136,7 @@ Generate a comprehensive, professional report using EXACTLY this format.
 Each section MUST start with **Section Title** (bold using double asterisks) followed by the content.
 Do NOT use markdown headers like # or ##. Only use **bold** for section titles.
 
-Required Sections (include all of them):
+Required Sections (include all of them, fully translated to the target language):
 
 **Executive Summary**
 A concise 3-4 sentence overview of the overall inventory health, total value in INR, and most critical action points.

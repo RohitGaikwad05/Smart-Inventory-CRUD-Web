@@ -1,7 +1,7 @@
-# 📦 Kognio: AI Smart Inventory System
+# 📦 Smart Inventory Crud Web Application With NLP
 > **Intelligence in Motion. Logistics Reimagined.**
 
-Kognio is a high-fidelity, full-stack Smart Inventory Management system that bridges the gap between traditional CRUD operations and **Natural Language Intelligence**. Built for modern operations, it allows users to manage complex inventory flows using simple voice and text commands.
+**Smart Inventory Crud Web Application With NLP** is a high-fidelity, full-stack Smart Inventory Management system that bridges the gap between traditional CRUD operations and **Natural Language Intelligence**. Built for modern operations, it allows users to manage complex inventory flows using simple voice and text commands.
 
 ![Status](https://img.shields.io/badge/Status-Production--Ready-success.svg?style=for-the-badge)
 ![Version](https://img.shields.io/badge/Version-1.0.0-blue.svg?style=for-the-badge)
@@ -12,7 +12,7 @@ Kognio is a high-fidelity, full-stack Smart Inventory Management system that bri
 ## ✨ Core Innovations
 
 ### 🎤 NLP & Voice Command Engine
-Stop clicking, start talking. Kognio features a custom-built **Natural Language Processing (NLP)** layer that interprets conversational English into database actions.
+Stop clicking, start talking. **Smart Inventory Crud Web Application With NLP** features a custom-built **Natural Language Processing (NLP)** layer that interprets conversational English into database actions.
 *   *"Add 50 laptops to stock"*
 *   *"Increase chair inventory by 10"*
 *   *"Show me all products with low stock"*
@@ -20,7 +20,7 @@ Stop clicking, start talking. Kognio features a custom-built **Natural Language 
 ### 🛡️ Resilience & "Always-On" Demo Mode
 Designed for high-stakes presentations. The system features a **Multi-Tier Database Fallback**:
 *   **Cloud Mode**: Connects to MongoDB Atlas.
-*   **Emergency Bypass**: Includes a built-in "Demo Admin" (`admin@kognio.ai`) that works even without an internet connection or if the database is blocked by firewalls.
+*   **Emergency Bypass**: Includes a built-in "Demo Admin" (`admin@smartinventory.app`) that works even without an internet connection or if the database is blocked by firewalls.
 
 ### 📊 AI Health Scoring
 A dynamic KPI engine that calculates the real-time "Health" of your inventory based on stock movement, dead stock periods, and overstock thresholds.
@@ -67,12 +67,12 @@ To run the project locally and see the "Smart" features in action:
    ```
 2. **Access**: Open `http://localhost:3000`
 3. **Login (Instant Demo)**:
-   *   **User**: `admin@kognio.ai`
+   *   **User**: `admin@smartinventory.app`
    *   **Pass**: `admin123`
 
 ---
 
-## 👨‍💻 Developed By (Team Kognio)
+## 👨‍💻 Developed By
 
 This project was developed as a collaborative engineering effort by:
 

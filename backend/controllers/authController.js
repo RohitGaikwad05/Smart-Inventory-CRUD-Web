@@ -72,10 +72,10 @@ exports.login = async (req, res) => {
 
     // --- EMERGENCY DEMO BYPASS ---
     // If the DB is blocked, you can still log in with these credentials for your demo.
-    if (email === 'admin@kognio.ai' && password === 'admin123') {
+    if (email === 'admin@smartinventory.app' && password === 'admin123') {
       return res.json({
         token: generateToken('demo-admin-id'),
-        user: { id: 'demo-admin-id', name: 'Demo Administrator', email: 'admin@kognio.ai', role: 'admin' }
+        user: { id: 'demo-admin-id', name: 'Demo Administrator', email: 'admin@smartinventory.app', role: 'admin' }
       });
     }
 

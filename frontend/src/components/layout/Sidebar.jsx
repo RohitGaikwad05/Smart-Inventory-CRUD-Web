@@ -10,28 +10,32 @@ import {
   Users,
   User,
   LogOut,
-  History
+  History,
+  ShoppingBag,
+  Settings as SettingsIcon
 } from "lucide-react";
 
 import { NavLink, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { useLanguage } from "../../context/LanguageContext";
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-  { icon: Package, label: "Products", path: "/products" },
-  { icon: Boxes, label: "Stock", path: "/stock" },
-  { icon: History, label: "Stock Ledger", path: "/transactions" },
-  { icon: Users, label: "Suppliers", path: "/suppliers" },
-  { icon: Mic, label: "Voice", path: "/voice" },
-  { icon: MessageCircle, label: "Chat", path: "/chat" },
-  { icon: Sparkles, label: "AI Report", path: "/report-generator" },
-  { icon: BarChart3, label: "Reports", path: "/reports" },
-  { icon: FileText, label: "Create Invoice", path: "/invoice" },
-  { icon: FileText, label: "All Invoices", path: "/invoices" },
+  { icon: LayoutDashboard, label: "Dashboard", key: "sidebar.dashboard", path: "/dashboard" },
+  { icon: Package, label: "Products", key: "sidebar.products", path: "/products" },
+  { icon: Boxes, label: "Stock", key: "sidebar.stock", path: "/stock" },
+  { icon: History, label: "Stock Ledger", key: "sidebar.ledger", path: "/transactions" },
+  { icon: Users, label: "Suppliers", key: "sidebar.suppliers", path: "/suppliers" },
+  { icon: Mic, label: "Voice", key: "sidebar.voice", path: "/voice" },
+  { icon: MessageCircle, label: "Chat", key: "sidebar.chat", path: "/chat" },
+  { icon: Sparkles, label: "AI Report", key: "sidebar.aiReport", path: "/report-generator" },
+  { icon: BarChart3, label: "Reports", key: "sidebar.reports", path: "/reports" },
+  { icon: FileText, label: "Create Invoice", key: "sidebar.createInvoice", path: "/invoice" },
+  { icon: FileText, label: "All Invoices", key: "sidebar.allInvoices", path: "/invoices" },
+  { icon: ShoppingBag, label: "Purchase Order", key: "sidebar.purchaseOrder", path: "/purchase-order" },
 ];
 
 export default function Sidebar() {
-
+  const { t } = useLanguage();
   const location = useLocation();
   const itemRefs = useRef([]);
   const [highlightStyle, setHighlightStyle] = useState({});
@@ -61,26 +65,22 @@ export default function Sidebar() {
 
         <img
           src="/logo.png"
-          alt="Kognio Logo"
+          alt="Smart Inventory Crud Web Application With NLP Logo"
           className="h-20 w-20 object-contain 
                      drop-shadow-[0_0_15px_rgba(139,92,246,0.6)]"
         />
 
         <div>
-          <p className="text-xl font-bold 
-            bg-gradient-to-r from-indigo-500 to-purple-600 
+          <p className="text-sm font-bold leading-snug
+            bg-gradient-to-r from-indigo-500 to-purple-600
             bg-clip-text text-transparent">
-            Kognio
-          </p>
-
-          <p className="text-xs text-gray-500">
-            Inventory, Powered by Intelligence
+            Smart Inventory Crud Web Application With NLP
           </p>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="relative flex flex-col gap-2">
+      <nav className="relative flex flex-col gap-2 flex-1 overflow-y-auto pr-1 mb-6">
 
         {/* 🔥 FLOATING ACTIVE BACKGROUND */}
         <div
@@ -130,7 +130,7 @@ export default function Sidebar() {
               {/* Content */}
               <div className="relative z-10 flex items-center gap-3">
                 <Icon size={18} />
-                {item.label}
+                {t(item.key) || item.label}
               </div>
 
             </NavLink>
@@ -139,18 +139,29 @@ export default function Sidebar() {
 
       </nav>
 
-      {/* Footer Profile & Logout */}
-      <div className="mt-auto pt-6 border-t border-gray-100 flex flex-col gap-2">
+      {/* Footer Profile, Settings & Logout */}
+      <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col gap-1">
         <NavLink
           to="/profile"
           className={({ isActive }) =>
-            `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
-              isActive ? "bg-indigo-50 text-indigo-600" : "text-gray-500 hover:bg-gray-100"
+            `flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
+              isActive ? "bg-indigo-50 text-indigo-600 font-bold" : "text-gray-500 hover:bg-gray-50"
             }`
           }
         >
           <User size={18} />
-          Profile
+          {t('sidebar.profile') || 'Profile'}
+        </NavLink>
+        <NavLink
+          to="/settings"
+          className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
+              isActive ? "bg-indigo-50 text-indigo-600 font-bold" : "text-gray-500 hover:bg-gray-50"
+            }`
+          }
+        >
+          <SettingsIcon size={18} />
+          {t('sidebar.settings') || 'Settings'}
         </NavLink>
       </div>
 

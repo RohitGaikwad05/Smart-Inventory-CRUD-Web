@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { productService } from '../../services/productService';
 import { ArrowDownToLine, ArrowUpFromLine, AlertCircle } from "lucide-react";
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function StockManagement() {
+  const { t } = useLanguage();
   const [products, setProducts] = useState([]);
   
   // Add Stock State
@@ -39,7 +41,7 @@ export default function StockManagement() {
         reason: addReason
       });
 
-      alert("Stock Added & Logged to Ledger");
+      alert(t('stock.successMsg') || "Stock Added & Logged to Ledger");
       
       setAddQuantity("");
       setAddReason("");
@@ -61,7 +63,7 @@ export default function StockManagement() {
         reason: removeReason
       });
 
-      alert("Stock Removed & Logged to Ledger");
+      alert(t('stock.successMsg') || "Stock Removed & Logged to Ledger");
 
       setRemoveQuantity("");
       setRemoveReason("");
@@ -76,8 +78,8 @@ export default function StockManagement() {
   return (
     <div className="space-y-8 max-w-5xl">
       <div>
-        <h1 className="text-2xl font-bold text-gray-800">Manual Stock Adjustments</h1>
-        <p className="text-gray-500 text-sm mt-1">Use this page for manual cycle counts, damages, or shrinkage. All actions are securely recorded in the Stock Ledger.</p>
+        <h1 className="text-2xl font-bold text-gray-800">{t('stock.title')}</h1>
+        <p className="text-gray-500 text-sm mt-1">{t('stock.subtitle')}</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
@@ -89,24 +91,24 @@ export default function StockManagement() {
               <ArrowDownToLine size={20} />
             </div>
             <div>
-              <h2 className="font-bold text-emerald-900">Stock In (Add)</h2>
+              <h2 className="font-bold text-emerald-900">{t('stock.add')}</h2>
               <p className="text-xs text-emerald-700 font-medium">Found stock or direct intake</p>
             </div>
           </div>
           
           <form onSubmit={handleAddStock} className="p-6 space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Select Product</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('stock.selectProduct')}</label>
               <select
                 value={addSelectedProduct}
                 onChange={(e) => setAddSelectedProduct(e.target.value)}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 transition"
                 required
               >
-                <option value="">-- Choose Product --</option>
+                <option value="">-- {t('stock.chooseProduct')} --</option>
                 {products.map(p => (
                   <option key={p._id} value={p._id}>
-                    {p.name} (Current: {p.quantity})
+                    {p.brand && p.brand !== "Generic" ? `[${p.brand.toUpperCase()}] ${p.name}` : p.name} (Current: {p.quantity})
                   </option>
                 ))}
               </select>
@@ -114,7 +116,7 @@ export default function StockManagement() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Quantity to Add</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('stock.quantity')}</label>
                 <input
                   type="number"
                   placeholder="e.g. 50"
@@ -128,10 +130,10 @@ export default function StockManagement() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Reason for Addition</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('stock.notes')}</label>
               <input
                 type="text"
-                placeholder="e.g. Found in back warehouse"
+                placeholder={t('stock.notesPlaceholder')}
                 value={addReason}
                 onChange={(e) => setAddReason(e.target.value)}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 transition"
@@ -143,7 +145,7 @@ export default function StockManagement() {
               type="submit"
               className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 rounded-xl transition shadow-md shadow-emerald-200 flex justify-center items-center gap-2"
             >
-              Confirm Stock In
+              {t('stock.submitBtn')}
             </button>
           </form>
         </div>
@@ -155,24 +157,24 @@ export default function StockManagement() {
               <ArrowUpFromLine size={20} />
             </div>
             <div>
-              <h2 className="font-bold text-rose-900">Stock Out (Remove)</h2>
+              <h2 className="font-bold text-rose-900">{t('stock.remove')}</h2>
               <p className="text-xs text-rose-700 font-medium">Damages, shrinkage, or manual disposal</p>
             </div>
           </div>
 
           <form onSubmit={handleRemoveStock} className="p-6 space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Select Product</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('stock.selectProduct')}</label>
               <select
                 value={removeSelectedProduct}
                 onChange={(e) => setRemoveSelectedProduct(e.target.value)}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-rose-500 transition"
                 required
               >
-                <option value="">-- Choose Product --</option>
+                <option value="">-- {t('stock.chooseProduct')} --</option>
                 {products.map(p => (
                   <option key={p._id} value={p._id}>
-                    {p.name} (Current: {p.quantity})
+                    {p.brand && p.brand !== "Generic" ? `[${p.brand.toUpperCase()}] ${p.name}` : p.name} (Current: {p.quantity})
                   </option>
                 ))}
               </select>
@@ -180,7 +182,7 @@ export default function StockManagement() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Quantity to Remove</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('stock.quantity')}</label>
                 <input
                   type="number"
                   placeholder="e.g. 5"
@@ -194,10 +196,10 @@ export default function StockManagement() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Reason for Removal</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('stock.notes')}</label>
               <input
                 type="text"
-                placeholder="e.g. Damaged in transit"
+                placeholder={t('stock.notesPlaceholder')}
                 value={removeReason}
                 onChange={(e) => setRemoveReason(e.target.value)}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-rose-500 transition"
@@ -214,7 +216,7 @@ export default function StockManagement() {
               type="submit"
               className="w-full bg-rose-600 hover:bg-rose-700 text-white font-medium py-3 rounded-xl transition shadow-md shadow-rose-200 flex justify-center items-center gap-2"
             >
-              Confirm Stock Out
+              {t('stock.submitBtn')}
             </button>
           </form>
         </div>

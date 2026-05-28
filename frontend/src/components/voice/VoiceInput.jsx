@@ -1,18 +1,66 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { chatService } from "../../services/chatService";
 import { Mic, Square, Loader2, Volume2, CheckCircle2, History, AlertCircle } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
 
-const SUPPORTED_LANGUAGES = [
-  { code: "en-US", name: "English (US)" },
-  { code: "en-IN", name: "English (India)" },
-  { code: "hi-IN", name: "Hindi (हिंदी)" },
-  { code: "mr-IN", name: "Marathi (मराठी)" },
-  { code: "gu-IN", name: "Gujarati (ગુજરાતી)" },
-  { code: "ta-IN", name: "Tamil (தமிழ்)" },
-  { code: "te-IN", name: "Telugu (తెలుగు)" }
-];
+const localTipsT = {
+  en: {
+    title: "Voice AI Guidelines",
+    langStatus: "Active Listener Language",
+    tip1: "Speak clearly and hold the mic at a moderate distance.",
+    tip2: "Speak naturally: the AI parses colloquial phrases easily.",
+    tip3: "Double-check the text draft before confirming execution."
+  },
+  mr: {
+    title: "आवाज एआय मार्गदर्शक तत्त्वे",
+    langStatus: "सक्रिय ऐकण्याची भाषा",
+    tip1: "स्पष्ट बोला आणि माइक मध्यम अंतरावर धरा.",
+    tip2: "नैसर्गिकपणे बोला: एआय अनौपचारिक वाक्ये सहज समजते.",
+    tip3: "कार्यान्वित करण्याची पुष्टी करण्यापूर्वी मजकूर मसुदा पुन्हा तपासा."
+  },
+  hi: {
+    title: "आवाज एआई दिशानिर्देश",
+    langStatus: "सक्रिय सुनने की भाषा",
+    tip1: "स्पष्ट रूप से बोलें और माइक को मध्यम दूरी पर रखें।",
+    tip2: "प्राकृतिक रूप से बोलें: एआई बोलचाल के वाक्यांशों को आसानी से समझता है।",
+    tip3: "पुष्टि करने से पहले पाठ के मसौदे की दोबारा जांच करें।"
+  },
+  ta: {
+    title: "குரல் AI வழிகாட்டுதல்கள்",
+    langStatus: "செயலில் உள்ள கேட்கும் மொழி",
+    tip1: "தெளிவாகப் பேசுங்கள் மற்றும் மைக்கை மிதமான தூரத்தில் வைக்கவும்.",
+    tip2: "இயல்பாகப் பேசுங்கள்: AI பேச்சுவழக்கு சொற்றொடர்களை எளிதில் அலசும்.",
+    tip3: "உறுதிப்படுத்துவதற்கு முன் உரை வரைவை இருமுறை சரிபார்க்கவும்."
+  },
+  pa: {
+    title: "ਵੌਇਸ AI ਦਿਸ਼ਾ-ਨਿਰਦੇਸ਼",
+    langStatus: "ਸਰਗਰਮ ਸੁਣਨ ਦੀ ਭਾਸ਼ਾ",
+    tip1: "ਸਪਸ਼ਟ ਬੋਲੋ ਅਤੇ ਮਾਈਕ ਨੂੰ ਮੱਧਮ ਦੂਰੀ 'ਤੇ ਰੱਖੋ।",
+    tip2: "ਕੁਦਰਤੀ ਬੋਲੋ: AI ਬੋਲਚਾਲ ਦੇ ਵਾਕਾਂਸ਼ਾਂ ਨੂੰ ਆਸਾਨੀ ਨਾਲ ਸਮਝਦਾ ਹੈ।",
+    tip3: "ਪੁਸ਼ਟੀ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ ਟੈਕਸਟ ਡਰਾਫਟ ਦੀ ਦੋ ਵਾਰ ਜਾਂਚ ਕਰੋ।"
+  },
+  gu: {
+    title: "વોઇસ AI માર્ગદર્શિકા",
+    langStatus: "સક્રિય સાંભળવાની ભાષા",
+    tip1: "સ્પષ્ટ બોલો અને માઇકને મધ્યમ અંતરે રાખો.",
+    tip2: "કુદરતી રીતે બોલો: AI બોલચાલના શબ્દસમૂહોને સરળતાથી સમજે છે.",
+    tip3: "પુષ્ટિ કરતા પહેલા ટેક્સ્ટ ડ્રાફ્ટને બે વાર તપાસો."
+  }
+};
 
 export default function VoiceInput() {
+  const { language: sysLang, t, changeLanguage } = useLanguage();
+  const lt = localTipsT[sysLang] || localTipsT.en;
+
+  const getLanguageName = () => {
+    if (sysLang === "hi") return "Hindi (हिंदी)";
+    if (sysLang === "mr") return "Marathi (मराठी)";
+    if (sysLang === "gu") return "Gujarati (ગુજરાતી)";
+    if (sysLang === "ta") return "Tamil (தமிழ்)";
+    if (sysLang === "pa") return "Punjabi (ਪੰਜਾਬੀ)";
+    return "English (US)";
+  };
+
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState(null);
 
@@ -26,9 +74,26 @@ export default function VoiceInput() {
   const [history, setHistory] = useState([]);
   const [status, setStatus] = useState("Ready");
 
-  const [language, setLanguage] = useState("hi-IN");
+  const [language, setLanguage] = useState("en-US");
   const [autoSpeak, setAutoSpeak] = useState(true);
   const [isSpeaking, setIsSpeaking] = useState(false);
+
+  // Sync speech recognition language with global system language
+  useEffect(() => {
+    if (sysLang === "hi") {
+      setLanguage("hi-IN");
+    } else if (sysLang === "mr") {
+      setLanguage("mr-IN");
+    } else if (sysLang === "gu") {
+      setLanguage("gu-IN");
+    } else if (sysLang === "ta") {
+      setLanguage("ta-IN");
+    } else if (sysLang === "pa") {
+      setLanguage("pa-IN");
+    } else {
+      setLanguage("en-US");
+    }
+  }, [sysLang]);
 
   /* TEXT TO SPEECH */
   const speak = (text) => {
@@ -101,7 +166,8 @@ export default function VoiceInput() {
     setProcessing(true);
     setStatus("Processing Command...");
     try {
-      const result = await chatService.sendMessage(transcript);
+      const cleanLang = language.startsWith("mr") ? "mr" : (language.startsWith("hi") ? "hi" : "en");
+      const result = await chatService.sendMessage(transcript, undefined, cleanLang);
       setResponse(result.data);
       setHistory(prev => [
         {
@@ -133,12 +199,19 @@ export default function VoiceInput() {
 
   /* SUGGESTIONS */
   const suggestions = [
-    "Add 50 laptops",
-    "Remove 10 mouse",
-    "Show inventory",
-    "What is inventory value",
-    "Create product GPU price 30000"
+    t('voice.ex1') || "Show me all products with low stock",
+    t('voice.ex2') || "Add 50 laptops to stock",
+    t('voice.ex3') || "Update price of Table to 1500",
+    t('voice.ex4') || "Show inventory",
+    t('voice.ex5') || "What is total inventory value?"
   ];
+
+  const getLocalizedStatus = (s) => {
+    if (s === "Ready") return t('voice.connected') || "Ready";
+    if (s === "Listening...") return t('voice.listening') || "Listening...";
+    if (s === "Processing Command...") return t('voice.processing') || "Processing...";
+    return s;
+  };
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
@@ -149,8 +222,8 @@ export default function VoiceInput() {
           <Mic size={24} />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Voice Assistant</h1>
-          <p className="text-gray-500 text-sm">Use multi-lingual voice commands to control your inventory</p>
+          <h1 className="text-2xl font-bold text-gray-800">{t('voice.title')}</h1>
+          <p className="text-gray-500 text-sm">{t('voice.subtitle')}</p>
         </div>
       </div>
 
@@ -168,7 +241,7 @@ export default function VoiceInput() {
               "bg-gray-50 text-gray-600 border border-gray-200"
             }`}>
               {isListening && <div className="w-2 h-2 rounded-full bg-pink-500 animate-ping" />}
-              {status}
+              {getLocalizedStatus(status)}
             </div>
 
             {/* MIC ORB */}
@@ -214,27 +287,43 @@ export default function VoiceInput() {
                 onClick={stopListening}
                 className="flex items-center gap-2 text-rose-500 hover:bg-rose-50 px-4 py-2 rounded-xl transition font-medium"
               >
-                <Square size={16} /> Stop Listening
+                <Square size={16} /> {t('voice.stopBtn') || 'Stop Listening'}
               </button>
             )}
 
           </div>
 
-          {/* SETTINGS */}
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-            <h3 className="font-bold text-gray-800 mb-4">Voice Settings</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Spoken Language</label>
-                <select 
-                  value={language}
-                  onChange={e => setLanguage(e.target.value)}
-                  className="w-full border border-gray-200 p-3 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
-                >
-                  {SUPPORTED_LANGUAGES.map(lang => (
-                    <option key={lang.code} value={lang.code}>{lang.name}</option>
-                  ))}
-                </select>
+          {/* VOICE AI GUIDELINES & TIPS */}
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 space-y-5">
+            <div className="flex items-center gap-2 pb-3 border-b border-gray-50">
+              <span className="flex h-2.5 w-2.5 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+              </span>
+              <h3 className="font-bold text-gray-800 text-base">{lt.title}</h3>
+            </div>
+            
+            {/* Active Language Status Indicator */}
+            <div className="p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100/50 flex items-center justify-between">
+              <span className="text-xs font-semibold text-indigo-700 uppercase tracking-wider">{lt.langStatus}</span>
+              <span className="px-3 py-1 bg-white text-purple-700 text-xs font-bold rounded-full shadow-sm border border-purple-100">
+                {getLanguageName()}
+              </span>
+            </div>
+
+            {/* List of Tips */}
+            <div className="space-y-3.5 text-sm text-gray-600">
+              <div className="flex gap-3">
+                <span className="text-indigo-500 font-semibold shrink-0">01</span>
+                <p className="leading-relaxed">{lt.tip1}</p>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-indigo-500 font-semibold shrink-0">02</span>
+                <p className="leading-relaxed">{lt.tip2}</p>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-indigo-500 font-semibold shrink-0">03</span>
+                <p className="leading-relaxed">{lt.tip3}</p>
               </div>
             </div>
           </div>
@@ -251,7 +340,7 @@ export default function VoiceInput() {
                 <Mic size={100} />
               </div>
               <h3 className="text-indigo-200 font-medium mb-2 flex items-center gap-2 text-sm uppercase tracking-wider">
-                I Heard You Say
+                {t('voice.lastCommand') || 'I Heard You Say'}
               </h3>
               <p className="text-3xl font-bold leading-tight mb-6">"{transcript}"</p>
 
@@ -263,13 +352,13 @@ export default function VoiceInput() {
                       onClick={() => setAwaitConfirm(false)}
                       className="flex-1 sm:flex-none px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl transition text-sm font-medium"
                     >
-                      Cancel
+                      {t('products.cancelBtn') || 'Cancel'}
                     </button>
                     <button
                       onClick={executeCommand}
                       className="flex-1 sm:flex-none px-6 py-2 bg-white text-indigo-700 hover:bg-gray-50 rounded-xl transition text-sm font-bold flex items-center justify-center gap-2"
                     >
-                      <CheckCircle2 size={16} /> Confirm
+                      <CheckCircle2 size={16} /> {t('products.saveBtn') || 'Confirm'}
                     </button>
                   </div>
                 </div>
@@ -315,16 +404,16 @@ export default function VoiceInput() {
           {/* HISTORY */}
           <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
             <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <History size={18} className="text-gray-400" /> Recent Commands
+              <History size={18} className="text-gray-400" /> {t('voice.lastCommand') || 'Recent Commands'}
             </h3>
             
             <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2">
               {history.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-gray-400 text-sm">No commands recorded in this session.</p>
+                  <p className="text-gray-400 text-sm">{t('voice.noCommands') || 'No commands recorded'}</p>
                   
                   <div className="mt-6">
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Try saying:</p>
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">{t('voice.exampleTitle') || 'Try saying:'}</p>
                     <div className="flex flex-wrap justify-center gap-2">
                       {suggestions.map((s, i) => (
                         <button key={i} onClick={() => setTranscript(s)} className="px-3 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full text-xs text-gray-600 font-medium transition">

@@ -5,7 +5,7 @@ export default function GoogleAuthModal({ isOpen, onClose, onSelect }) {
 
   const mockAccounts = [
     { name: 'Rohit Gaikwad', email: 'gaikwadrohit8351@gmail.com', avatar: 'RG' },
-    { name: 'Admin User', email: 'admin.kognio@company.com', avatar: 'A' },
+    { name: 'Admin User', email: 'admin@smartinventory.app', avatar: 'A' },
   ];
 
   return (
@@ -23,7 +23,7 @@ export default function GoogleAuthModal({ isOpen, onClose, onSelect }) {
             </svg>
           </div>
           <h2 className="text-xl font-medium text-gray-900">Choose an account</h2>
-          <p className="text-gray-600 text-sm mt-1">to continue to <span className="text-[#5438dc] font-semibold">Kognio</span></p>
+          <p className="text-gray-600 text-sm mt-1">to continue to <span className="text-[#5438dc] font-semibold">Smart Inventory Crud Web Application With NLP</span></p>
         </div>
 
         {/* Account List */}

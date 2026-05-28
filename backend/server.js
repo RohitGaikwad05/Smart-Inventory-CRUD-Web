@@ -12,7 +12,7 @@ app.use(express.json());
 
 // Health Check / Root Route
 app.get('/', (req, res) => {
-  res.send('Kognio Smart Inventory Backend is Running! 🚀');
+  res.send('Smart Inventory CRUD with NLP Backend is Running! 🚀');
 });
 
 // Routes
@@ -25,6 +25,7 @@ app.use('/api/reports', require('./routes/reports'));
 app.use("/api/invoices", require("./routes/invoice"));
 app.use("/api/suppliers", require("./routes/suppliers"));
 app.use("/api/transactions", require("./routes/transactions"));
+app.use("/api/purchase-orders", require("./routes/purchaseOrder"));
 
 // Error handler
 app.use(errorHandler);
@@ -48,7 +49,18 @@ app.get('/debug', (req, res) => {
 });
 
 // Connect to database and start server
-connectDB().then(() => {
+connectDB().then(async () => {
+  try {
+    const Product = require('./models/Product');
+    const updateResult = await Product.updateMany(
+      { minStockLevel: { $ne: 10 } },
+      { $set: { minStockLevel: 10 } }
+    );
+    console.log(`Successfully migrated existing products. Updated ${updateResult.modifiedCount} products to minStockLevel: 10.`);
+  } catch (err) {
+    console.error("Database migration error:", err);
+  }
+
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

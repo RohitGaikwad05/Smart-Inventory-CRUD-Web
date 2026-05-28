@@ -19,7 +19,7 @@ export default function Login() {
       let finalEmail = account.email;
 
       if (account.isNew) {
-        finalName = window.prompt("Enter your Name for Kognio:", "Google User");
+        finalName = window.prompt("Enter your Name for Smart Inventory Crud Web Application With NLP:", "Google User");
         finalEmail = window.prompt("Enter your Gmail:", "user@gmail.com");
       }
       
@@ -54,7 +54,7 @@ export default function Login() {
       <header className="flex justify-between items-center p-6 bg-transparent">
         <div className="flex items-center gap-3">
           <img src="/logo.png" alt="Logo" className="w-10 h-10 object-contain" />
-          <h1 className="text-xl font-bold text-[#5438dc]">Kognio</h1>
+          <h1 className="text-sm font-bold text-[#5438dc] leading-tight max-w-[180px]">Smart Inventory Crud Web Application With NLP</h1>
         </div>
         <button className="text-sm text-gray-600 hover:text-gray-900 font-medium">Help Center</button>
       </header>
@@ -64,7 +64,7 @@ export default function Login() {
         <div className="w-full max-w-md bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 sm:p-10 border border-gray-100">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-2 tracking-tight">Welcome back</h2>
-            <p className="text-sm text-gray-500">Sign in to your Kognio account</p>
+            <p className="text-sm text-gray-500">Sign in to your Smart Inventory account</p>
           </div>
 
           {error && <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-100">{error}</div>}
@@ -149,7 +149,7 @@ export default function Login() {
         
         <div className="w-full max-w-md bg-transparent mt-4 text-center">
             <p className="text-sm text-gray-600">
-                New to Kognio? <Link to="/register" className="font-semibold text-[#5438dc] hover:text-[#4226b5]">Create an account</Link>
+                New to Smart Inventory Crud Web Application With NLP? <Link to="/register" className="font-semibold text-[#5438dc] hover:text-[#4226b5]">Create an account</Link>
             </p>
         </div>
       </div>
@@ -166,9 +166,9 @@ export default function Login() {
         <div>
         <div className="flex items-center gap-3 mb-1">
           <img src="/logo.png" alt="Logo" className="w-6 h-6 object-contain" />
-          <span className="font-bold text-[#5438dc] text-base">Kognio</span>
+          <span className="font-bold text-[#5438dc] text-base">Smart Inventory Crud Web Application With NLP</span>
         </div>
-          <p>© 2026 Kognio AI. Inventory, Powered by Intelligence.</p>
+          <p>© 2026 Smart Inventory CRUD Web Application With NLP. All rights reserved.</p>
         </div>
         <div className="flex gap-6 mt-4 md:mt-0">
           <a href="#" className="hover:text-gray-900">Privacy Policy</a>

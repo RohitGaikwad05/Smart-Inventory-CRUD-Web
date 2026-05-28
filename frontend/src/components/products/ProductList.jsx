@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { productService } from '../../services/productService';
 import ProductForm from './ProductForm';
+import { useLanguage } from '../../context/LanguageContext';
 
 import { Plus, Pencil, Trash2, Search, Package } from "lucide-react";
 
 export default function ProductList() {
+  const { t } = useLanguage();
 
   const [products, setProducts] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -91,8 +93,8 @@ export default function ProductList() {
             <Package size={24} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Product Inventory</h1>
-            <p className="text-gray-500 text-sm">Manage your catalog, SKUs, and stock limits</p>
+            <h1 className="text-2xl font-bold text-gray-800">{t('products.title')}</h1>
+            <p className="text-gray-500 text-sm">{t('products.subtitle')}</p>
           </div>
         </div>
 
@@ -101,7 +103,7 @@ export default function ProductList() {
           className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-4 py-2 rounded-xl shadow hover:opacity-90 transition"
         >
           <Plus size={16} />
-          Add Product
+          {t('products.addProductBtn')}
         </button>
 
       </div>
@@ -118,7 +120,7 @@ export default function ProductList() {
 
         <input
           type="text"
-          placeholder="Search products..."
+          placeholder={t('products.searchPlaceholder')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400"
@@ -144,17 +146,17 @@ export default function ProductList() {
 
             <tr>
 
-              <th className="text-left px-6 py-4">Name & SKU</th>
+              <th className="text-left px-6 py-4">{t('products.name')} & SKU</th>
 
-              <th className="text-left px-6 py-4">Unit Price</th>
+              <th className="text-left px-6 py-4">{t('products.price')}</th>
 
-              <th className="text-left px-6 py-4">Status</th>
+              <th className="text-left px-6 py-4">{t('purchaseOrder.status')}</th>
 
-              <th className="text-left px-6 py-4">Quantity</th>
+              <th className="text-left px-6 py-4">{t('products.quantity')}</th>
 
-              <th className="text-left px-6 py-4">Total Value</th>
+              <th className="text-left px-6 py-4">{t('invoice.total')}</th>
 
-              <th className="text-right px-6 py-4">Actions</th>
+              <th className="text-right px-6 py-4">{t('products.actions')}</th>
 
             </tr>
 
@@ -179,25 +181,44 @@ export default function ProductList() {
                   {/* NAME & SKU */}
 
                   <td className="px-6 py-4">
-                    <p className="font-medium text-gray-900">{product.name}</p>
+                    <p className="font-medium text-gray-900 flex items-center gap-1.5">
+                      {product.brand && product.brand !== "Generic" && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-gray-100 text-gray-600 uppercase tracking-wide">
+                          {product.brand}
+                        </span>
+                      )}
+                      {product.name}
+                    </p>
                     {product.sku && <p className="text-xs text-gray-400 font-mono mt-1">SKU: {product.sku}</p>}
                   </td>
 
                   {/* UNIT PRICE */}
 
                   <td className="px-6 py-4 text-gray-600 font-medium">
-                    ₹{product.price.toLocaleString("en-IN")}
+                    {product.price === 0 ? (
+                      <span className="px-2 py-0.5 text-xs font-semibold rounded bg-rose-50 text-rose-500 border border-rose-100 uppercase tracking-wide">
+                        ⚠️ Set Price
+                      </span>
+                    ) : (
+                      `₹${product.price.toLocaleString("en-IN")}`
+                    )}
                   </td>
 
                   {/* STATUS */}
                   
                   <td className="px-6 py-4">
                     {product.quantity === 0 ? (
-                      <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-red-50 text-red-600 border border-red-100">Out of Stock</span>
+                      <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-red-50 text-red-600 border border-red-100">
+                        {t('dashboard.outOfStock') || 'Out of Stock'}
+                      </span>
                     ) : lowStock ? (
-                      <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-50 text-amber-600 border border-amber-100">Low Stock</span>
+                      <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-50 text-amber-600 border border-amber-100">
+                        {t('dashboard.lowStock') || 'Low Stock'}
+                      </span>
                     ) : (
-                      <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">In Stock</span>
+                      <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
+                        {t('dashboard.inStock') || 'In Stock'}
+                      </span>
                     )}
                   </td>
 
@@ -205,7 +226,7 @@ export default function ProductList() {
 
                   <td className="px-6 py-4">
                     <span className="font-semibold text-gray-800">{product.quantity}</span>
-                    <span className="text-xs text-gray-400 ml-1">/ Min: {product.minStockLevel || 10}</span>
+                    <span className="text-xs text-gray-400 ml-1">/ {t('products.minStock')}: {product.minStockLevel || 10}</span>
                   </td>
 
 
@@ -223,7 +244,7 @@ export default function ProductList() {
                       onClick={() => handleEdit(product)}
                       className="p-2 rounded-lg hover:bg-gray-100 flex items-center gap-2 text-indigo-500 font-medium"
                     >
-                      <Pencil size={16} /> Edit
+                      <Pencil size={16} /> {t('products.edit')}
                     </button>
                   </td>
 

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { supplierService } from '../../services/supplierService';
 import { Plus, Pencil, Trash2, Users } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function SupplierList() {
+  const { t, language } = useLanguage();
   const [suppliers, setSuppliers] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editSupplier, setEditSupplier] = useState(null);
@@ -22,12 +24,14 @@ export default function SupplierList() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Delete this supplier?')) {
+    const confirmDelete = language === 'mr' ? 'हा पुरवठादार हटवायचा?' : (language === 'hi' ? 'क्या आप इस आपूर्तिकर्ता को हटाना चाहते हैं?' : 'Delete this supplier?');
+    if (window.confirm(confirmDelete)) {
       try {
         await supplierService.delete(id);
         fetchSuppliers();
       } catch (error) {
-        alert('Error deleting supplier');
+        const errorDelete = language === 'mr' ? 'पुरवठादार हटवताना त्रुटी आली' : (language === 'hi' ? 'आपूर्तिकर्ता को हटाने में त्रुटि' : 'Error deleting supplier');
+        alert(errorDelete);
       }
     }
   };
@@ -51,7 +55,8 @@ export default function SupplierList() {
       setFormData({ name: '', address: '', contactNumber: '', email: '', gstin: '' });
       fetchSuppliers();
     } catch (error) {
-      alert('Error saving supplier');
+      const errorSave = language === 'mr' ? 'पुरवठादार जतन करताना त्रुटी आली' : (language === 'hi' ? 'आपूर्तिकर्ता को सहेजने में त्रुटि' : 'Error saving supplier');
+      alert(errorSave);
     }
   };
 
@@ -63,8 +68,8 @@ export default function SupplierList() {
             <Users size={24} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Supplier Directory</h1>
-            <p className="text-gray-500 text-sm">Manage vendors, contact details, and GSTIN information</p>
+            <h1 className="text-2xl font-bold text-gray-800">{t('suppliers.title')}</h1>
+            <p className="text-gray-500 text-sm">{t('suppliers.subtitle')}</p>
           </div>
         </div>
         <button
@@ -76,26 +81,26 @@ export default function SupplierList() {
           className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-xl shadow hover:opacity-90 transition"
         >
           <Plus size={16} />
-          Add Supplier
+          {t('suppliers.addSupplier')}
         </button>
       </div>
 
       {showForm && (
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
-          <h2 className="text-lg font-semibold mb-4">{editSupplier ? 'Edit Supplier' : 'New Supplier'}</h2>
+          <h2 className="text-lg font-semibold mb-4">{editSupplier ? t('suppliers.editTitle') : t('suppliers.addNewTitle')}</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <input type="text" placeholder="Name" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="border p-2 rounded-lg w-full" required />
-              <input type="text" placeholder="Contact Number" value={formData.contactNumber} onChange={e => setFormData({ ...formData, contactNumber: e.target.value })} className="border p-2 rounded-lg w-full" required />
-              <input type="email" placeholder="Email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className="border p-2 rounded-lg w-full" />
+              <input type="text" placeholder={t('suppliers.name')} value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="border p-2 rounded-lg w-full" required />
+              <input type="text" placeholder={t('suppliers.phone')} value={formData.contactNumber} onChange={e => setFormData({ ...formData, contactNumber: e.target.value })} className="border p-2 rounded-lg w-full" required />
+              <input type="email" placeholder={t('suppliers.email')} value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className="border p-2 rounded-lg w-full" />
               <input type="text" placeholder="GSTIN" value={formData.gstin} onChange={e => setFormData({ ...formData, gstin: e.target.value })} className="border p-2 rounded-lg w-full" />
               <div className="col-span-2">
-                <textarea placeholder="Address" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} className="border p-2 rounded-lg w-full" required />
+                <textarea placeholder={t('suppliers.address')} value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} className="border p-2 rounded-lg w-full" required />
               </div>
             </div>
             <div className="flex justify-end gap-2">
-              <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg">Cancel</button>
-              <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-lg">Save</button>
+              <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg">{t('suppliers.cancelBtn')}</button>
+              <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-lg">{t('suppliers.saveBtn')}</button>
             </div>
           </form>
         </div>
@@ -105,11 +110,11 @@ export default function SupplierList() {
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-gray-600">
             <tr>
-              <th className="text-left px-6 py-4">Name</th>
-              <th className="text-left px-6 py-4">Contact</th>
-              <th className="text-left px-6 py-4">Address</th>
+              <th className="text-left px-6 py-4">{t('suppliers.name')}</th>
+              <th className="text-left px-6 py-4">{t('suppliers.contact')}</th>
+              <th className="text-left px-6 py-4">{t('suppliers.address')}</th>
               <th className="text-left px-6 py-4">GSTIN</th>
-              <th className="text-right px-6 py-4">Actions</th>
+              <th className="text-right px-6 py-4">{t('suppliers.actions')}</th>
             </tr>
           </thead>
           <tbody>

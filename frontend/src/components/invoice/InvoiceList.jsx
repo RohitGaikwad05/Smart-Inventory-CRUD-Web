@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import api from "../../services/api";
 import { supplierService } from "../../services/supplierService";
 import { Search, FileText } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function InvoiceList() {
+  const { t } = useLanguage();
   const [list, setList] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
   const [selectedSupplier, setSelectedSupplier] = useState("");
@@ -32,8 +34,8 @@ export default function InvoiceList() {
             <FileText size={24} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Invoice History</h1>
-            <p className="text-gray-500 text-sm">View and filter past sales and purchase invoices</p>
+            <h1 className="text-2xl font-bold text-gray-800">{t('invoices.title')}</h1>
+            <p className="text-gray-500 text-sm">{t('invoices.subtitle')}</p>
           </div>
         </div>
       </div>
@@ -45,7 +47,7 @@ export default function InvoiceList() {
             onChange={e => setSelectedSupplier(e.target.value)}
             className="w-full pl-4 pr-10 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
           >
-            <option value="">All Suppliers</option>
+            <option value="">{t('invoice.allSuppliers') || 'All Suppliers'}</option>
             {suppliers.map(s => <option key={s._id} value={s.name}>{s.name}</option>)}
           </select>
         </div>
@@ -55,18 +57,18 @@ export default function InvoiceList() {
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-gray-600">
             <tr>
-              <th className="text-left px-6 py-4">Invoice Number</th>
-              <th className="text-left px-6 py-4">Customer</th>
-              <th className="text-left px-6 py-4">Supplier</th>
-              <th className="text-left px-6 py-4">Date</th>
-              <th className="text-right px-6 py-4">Total Amount</th>
+              <th className="text-left px-6 py-4">{t('invoices.invoiceNum')}</th>
+              <th className="text-left px-6 py-4">{t('invoice.clientName') || 'Customer'}</th>
+              <th className="text-left px-6 py-4">{t('invoice.billTo') || 'Supplier'}</th>
+              <th className="text-left px-6 py-4">{t('invoices.date')}</th>
+              <th className="text-right px-6 py-4">{t('invoices.amount')}</th>
             </tr>
           </thead>
           <tbody>
             {list.map(i => (
               <tr key={i._id} className="border-t hover:bg-gray-50 transition">
                 <td className="px-6 py-4 font-medium text-indigo-600">{i.invoiceNumber}</td>
-                <td className="px-6 py-4 text-gray-800">{i.customerName || "Walk-in Customer"}</td>
+                <td className="px-6 py-4 text-gray-800">{i.customerName || t('invoice.walkInCustomer') || "Walk-in Customer"}</td>
                 <td className="px-6 py-4 text-gray-600">
                   {i.supplierName ? (
                     <span className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-medium border border-purple-100">
@@ -81,7 +83,7 @@ export default function InvoiceList() {
             {list.length === 0 && (
               <tr>
                 <td colSpan="5" className="px-6 py-8 text-center text-gray-500">
-                  No invoices found.
+                  {t('invoice.noInvoices') || 'No invoices found.'}
                 </td>
               </tr>
             )}

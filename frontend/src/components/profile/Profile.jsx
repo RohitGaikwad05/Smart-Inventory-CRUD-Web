@@ -1,8 +1,10 @@
 import { useAuth } from '../../hooks/useAuth';
 import { User, LogOut, Info, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function Profile() {
+  const { t } = useLanguage();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -18,8 +20,8 @@ export default function Profile() {
           <User size={24} />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">My Profile</h1>
-          <p className="text-gray-500 text-sm">Manage your account and view project credits</p>
+          <h1 className="text-2xl font-bold text-gray-800">{t('profile.title') || 'My Profile'}</h1>
+          <p className="text-gray-500 text-sm">{t('profile.subtitle') || 'Manage your account and view project credits'}</p>
         </div>
       </div>
 
@@ -42,7 +44,7 @@ export default function Profile() {
           className="flex items-center gap-2 px-6 py-3 bg-red-50 text-red-600 font-medium rounded-xl hover:bg-red-100 transition w-full md:w-auto justify-center"
         >
           <LogOut size={18} />
-          Logout
+          {t('profile.logout') || 'Logout'}
         </button>
       </div>
 
@@ -50,17 +52,17 @@ export default function Profile() {
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-6 border-b border-gray-50 bg-gray-50/50 flex items-center gap-2">
           <Info size={20} className="text-indigo-600" />
-          <h3 className="font-bold text-gray-800">📌 About the Project</h3>
+          <h3 className="font-bold text-gray-800">📌 {t('profile.aboutTitle') || 'About the Project'}</h3>
         </div>
         <div className="p-8 space-y-6">
           <p className="text-gray-600 leading-relaxed">
-            The <span className="font-semibold text-indigo-600">The Kognio-Smart Inventory CRUD Web Application with NLP</span> is a web-based system that helps manage inventory in a simple and efficient way. It allows users to add, view, update, and delete product data easily.
+            {t('profile.aboutP1') || 'The Smart Inventory Crud Web Application With NLP is a web-based system that helps manage inventory in a simple and efficient way. It allows users to add, view, update, and delete product data easily.'}
           </p>
           <p className="text-gray-600 leading-relaxed">
-            What makes this system <span className="italic">“smart”</span> is the use of <span className="font-semibold">Natural Language Processing (NLP)</span>. Users can give commands in simple language instead of going through complex steps, making the system faster and easier to use.
+            {t('profile.aboutP2') || 'What makes this system "smart" is the use of Natural Language Processing (NLP). Users can give commands in simple language instead of going through complex steps, making the system faster and easier to use.'}
           </p>
           <p className="text-gray-600 leading-relaxed">
-            This project shows how modern technology can improve traditional inventory systems by making them more user-friendly and intelligent.
+            {t('profile.aboutP3') || 'This project shows how modern technology can improve traditional inventory systems by making them more user-friendly and intelligent.'}
           </p>
         </div>
       </div>
@@ -69,7 +71,7 @@ export default function Profile() {
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-6 border-b border-gray-50 bg-gray-50/50 flex items-center gap-2">
           <Users size={20} className="text-indigo-600" />
-          <h3 className="font-bold text-gray-800">👨‍💻 Developed By</h3>
+          <h3 className="font-bold text-gray-800">👨‍💻 {t('profile.developedBy') || 'Developed By'}</h3>
         </div>
         <div className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

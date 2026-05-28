@@ -18,7 +18,10 @@ import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 
 import Profile from "./components/profile/Profile";
+import SettingsPage from "./components/settings/Settings";
 import SupplierList from "./components/suppliers/SupplierList";
+import PurchaseOrder from "./components/orders/PurchaseOrder";
+
 
 // A wrapper to handle authenticated routes
 function ProtectedRoute({ children }) {
@@ -55,7 +58,9 @@ function App() {
         <Route path="/report-generator" element={<ProtectedRoute><ReportGenerator /></ProtectedRoute>} />
         <Route path="/invoice" element={<ProtectedRoute><Invoice /></ProtectedRoute>} />
         <Route path="/invoices" element={<ProtectedRoute><InvoiceList /></ProtectedRoute>} />
+        <Route path="/purchase-order" element={<ProtectedRoute><PurchaseOrder /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
         
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

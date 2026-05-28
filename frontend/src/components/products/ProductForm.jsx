@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { productService } from '../../services/productService';
 import { X, Package } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function ProductForm({ product, onClose }) {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
+    brand: 'Generic',
     sku: '',
     price: '',
     quantity: '',
@@ -14,7 +17,10 @@ export default function ProductForm({ product, onClose }) {
 
   useEffect(() => {
     if (product) {
-      setFormData(product);
+      setFormData({
+        brand: 'Generic',
+        ...product
+      });
     }
   }, [product]);
 
@@ -28,7 +34,7 @@ export default function ProductForm({ product, onClose }) {
       }
       onClose();
     } catch (error) {
-      alert('Error saving product');
+      alert(t('products.saveErrorMsg') || 'Error saving product');
     }
   };
 
@@ -43,7 +49,7 @@ export default function ProductForm({ product, onClose }) {
               <Package size={20} />
             </div>
             <h2 className="text-xl font-bold text-gray-800">
-              {product ? 'Edit Product' : 'Add New Product'}
+              {product ? (t('products.editTitle') || 'Edit Product') : (t('products.addNewTitle') || 'Add New Product')}
             </h2>
           </div>
           <button 
@@ -56,20 +62,33 @@ export default function ProductForm({ product, onClose }) {
 
         {/* FORM */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-            <input
-              type="text"
-              placeholder="e.g. Dell XPS 15"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full border border-gray-200 p-3 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
-              required
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('products.brand') || 'Brand'}</label>
+              <input
+                type="text"
+                placeholder="e.g. Dell"
+                value={formData.brand || ''}
+                onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                className="w-full border border-gray-200 p-3 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('products.name') || 'Product Name'}</label>
+              <input
+                type="text"
+                placeholder="e.g. XPS 15"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full border border-gray-200 p-3 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                required
+              />
+            </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">SKU (Optional)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('products.sku') || 'SKU'} ({t('products.optional') || 'Optional'})</label>
             <input
               type="text"
               placeholder="e.g. LPT-DEL-001"
@@ -81,7 +100,7 @@ export default function ProductForm({ product, onClose }) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('products.priceLabel') || 'Price (₹)'}</label>
               <input
                 type="number"
                 placeholder="0"
@@ -92,7 +111,7 @@ export default function ProductForm({ product, onClose }) {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('products.quantity') || 'Quantity'}</label>
               <input
                 type="number"
                 placeholder="0"
@@ -105,7 +124,7 @@ export default function ProductForm({ product, onClose }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Low Stock Alert Level</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('products.minStockLabel') || 'Low Stock Alert Level'}</label>
             <input
               type="number"
               placeholder="10"
@@ -122,13 +141,13 @@ export default function ProductForm({ product, onClose }) {
               onClick={onClose} 
               className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition"
             >
-              Cancel
+              {t('products.cancelBtn') || 'Cancel'}
             </button>
             <button 
               type="submit" 
               className="flex-1 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl transition shadow-md shadow-indigo-200"
             >
-              {product ? 'Save Changes' : 'Create Product'}
+              {product ? (t('products.saveBtn') || 'Save Changes') : (t('products.createBtn') || 'Create Product')}
             </button>
           </div>
         </form>

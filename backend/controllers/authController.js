@@ -141,18 +141,31 @@ exports.googleLogin = async (req, res) => {
       });
     }
 
-    let user = await User.findOne({ email });
+    let user;
+    try {
+      user = await User.findOne({ email }).maxTimeMS(2000);
+    } catch (err) {
+      return res.status(500).json({
+        message: 'Database Connection Error. Please ensure you have whitelisted 0.0.0.0/0 (Access from Anywhere) in your MongoDB Atlas network settings.'
+      });
+    }
 
     if (!user) {
       // If a password was provided during the interactive Google signup, use it.
       // Otherwise, generate a secure random one as a fallback.
       const finalPassword = req.body.password || (Math.random().toString(36).slice(-10) + 'X9!');
 
-      user = await User.create({
-        name: name || email.split('@')[0],
-        email,
-        password: finalPassword
-      });
+      try {
+        user = await User.create({
+          name: name || email.split('@')[0],
+          email,
+          password: finalPassword
+        });
+      } catch (err) {
+        return res.status(500).json({
+          message: 'Failed to create user record. Please verify database connectivity.'
+        });
+      }
     }
 
 

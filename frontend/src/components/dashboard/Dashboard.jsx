@@ -277,8 +277,8 @@ export default function Dashboard() {
                       {t('dashboard.qty')}: <span className={prod.quantity === 0 ? "text-red-500 font-bold" : "text-amber-600 font-bold"}>{prod.quantity}</span>
                     </span>
                     <button 
-                      onClick={() => navigate('/stock')} 
-                      className="px-3 py-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg text-xs font-medium hover:opacity-90 transition"
+                      onClick={() => navigate('/purchase-order')} 
+                      className="px-3 py-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg text-xs font-medium hover:opacity-90 transition shadow-sm"
                     >
                       {t('dashboard.restockBtn')}
                     </button>

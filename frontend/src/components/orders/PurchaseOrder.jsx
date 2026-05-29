@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 import {
   ShoppingCart, Search, Plus, Minus, Trash2, Send,
   Package, ChevronDown, CheckCircle, AlertCircle,
   Loader2, ShoppingBag, Tag, X
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function PurchaseOrder() {
   const { t } = useLanguage();
@@ -22,19 +20,20 @@ export default function PurchaseOrder() {
 
   /* ── Fetch products & suppliers ── */
   useEffect(() => {
-    const headers = { Authorization: `Bearer ${localStorage.getItem('token')}` };
     Promise.all([
-      axios.get(`${API}/products`, { headers }),
-      axios.get(`${API}/suppliers`, { headers })
+      api.get('/products'),
+      api.get('/suppliers')
     ]).then(([pRes, sRes]) => {
-      setProducts(pRes.data);
-      setSuppliers(sRes.data);
-    }).catch(console.error);
+      setProducts(Array.isArray(pRes.data) ? pRes.data : []);
+      setSuppliers(Array.isArray(sRes.data) ? sRes.data : []);
+    }).catch(err => {
+      console.error("PurchaseOrder fetch error:", err);
+    });
   }, []);
 
   /* ── Filtered products ── */
-  const filtered = products.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
+  const filtered = (products || []).filter(p =>
+    (p.name || '').toLowerCase().includes(search.toLowerCase()) ||
     (p.category || '').toLowerCase().includes(search.toLowerCase())
   );
 
@@ -69,7 +68,6 @@ export default function PurchaseOrder() {
     setLoading(true);
     setStatus(null);
     try {
-      const headers = { Authorization: `Bearer ${localStorage.getItem('token')}` };
       const items = cart.map(c => ({
         productId: c._id,
         productName: c.name,
@@ -77,11 +75,11 @@ export default function PurchaseOrder() {
         price: c.price || 0
       }));
 
-      const res = await axios.post(`${API}/purchase-orders/send`, {
+      const res = await api.post('/purchase-orders/send', {
         supplierId: selectedSupplier,
         items,
         note
-      }, { headers });
+      });
 
       setStatus({ type: 'success', msg: res.data.message });
       setCart([]);

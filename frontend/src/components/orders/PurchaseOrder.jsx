@@ -32,10 +32,12 @@ export default function PurchaseOrder() {
   }, []);
 
   /* ── Filtered products ── */
-  const filtered = (products || []).filter(p =>
-    (p.name || '').toLowerCase().includes(search.toLowerCase()) ||
-    (p.category || '').toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = (products || []).filter(p => {
+    const pName = p.name || '';
+    const pCat = p.category && typeof p.category === 'object' ? (p.category.name || '') : (p.category || '');
+    return pName.toLowerCase().includes(search.toLowerCase()) ||
+           pCat.toLowerCase().includes(search.toLowerCase());
+  });
 
   /* ── Add to cart ── */
   const addToCart = (product) => {
@@ -186,7 +188,9 @@ export default function PurchaseOrder() {
                   {product.category && (
                     <div className="flex items-center gap-1 mb-2">
                       <Tag size={11} className="text-gray-400" />
-                      <span className="text-xs text-gray-400">{product.category}</span>
+                      <span className="text-xs text-gray-400">
+                        {typeof product.category === 'object' ? product.category.name : product.category}
+                      </span>
                     </div>
                   )}
 

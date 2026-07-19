@@ -93,3 +93,4 @@ You can use these directly in the **Voice AI** or **Chat AI** sections:
 
 ---
 ⭐️ **If this project helped you, give it a star on GitHub!**
+thank you
